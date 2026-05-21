@@ -983,14 +983,6 @@ class RdpFlowCard extends HTMLElement {
           </div>
         </div>
       </div>
-      <div class="dv"></div>
-      <div class="ct">☀️ Inverter</div>
-      <div class="pvf">
-        <div class="pvi"><div class="ico">☀️</div><div class="lbl">Today PV</div><div class="val yw" id="invTodayPv">-- kWh</div></div>
-        <div class="pvi"><div class="ico">🔋</div><div class="lbl">Chg / Dis</div><div class="val" id="invTodayBattChg">-- kWh</div><div class="val" id="invTodayBattDis" style="font-size:.62rem;color:#8b949e;margin-top:1px">-- kWh</div></div>
-        <div class="pvi"><div class="ico">⚡</div><div class="lbl">Remaining</div><div class="val" id="invRemCap">-- Ah</div><div class="val" id="invRemKwh" style="font-size:.62rem;color:#8b949e;margin-top:1px">-- kWh</div></div>
-        <div class="pvi"><div class="ico">🏡</div><div class="lbl">Today Load</div><div class="val" id="invTodayLoad">-- kWh</div></div>
-      </div>
     </div>`;
   }
 
@@ -1018,13 +1010,6 @@ class RdpFlowCard extends HTMLElement {
     const gridImport = _n(this._val(this.config.grid_import_energy));
     const gridExport = _n(this._val(this.config.grid_export_energy));
     const load = _n(this._val(this.config.consump, true));
-    // Fix #9: store raw null so we can show '--' and use toFixed(2) to avoid float artefacts
-    const _todayPvRaw = this._val(this.config.today_pv);
-    const _todayBattChgRaw = this._val(this.config.today_batt_chg);
-    const _todayLoadRaw = this._val(this.config.today_load);
-    const todayPv = _n(_todayPvRaw);
-    const todayBattChg = _n(_todayBattChgRaw);
-    const todayLoad = _n(_todayLoadRaw);
     const battSoc1 = _n(this._val(this.config.battery_soc) ?? this._val(this.config.goodwe_battery_soc));
     let battPwr1 = _nullOr0(this._val(this.config.battery_power, true));
     if (this.config.invert_battery_power) battPwr1 = -battPwr1;
@@ -1255,24 +1240,6 @@ class RdpFlowCard extends HTMLElement {
     setDisplay('pv4label', this.config._show_pv_extra);
     setDisplay('pv4FlowVal', this.config._show_pv_extra);
     if (this.config._show_pv_extra) setText('pv4FlowVal', pv4 >= 1000 ? (pv4 / 1000).toFixed(2) + ' kW' : pv4.toFixed(0) + ' W');
-
-    // Fix #9: use toFixed(2) to prevent floating-point artefacts; show '--' when sensor unavailable
-    setText('invTodayPv',      _todayPvRaw      !== null ? todayPv.toFixed(2)      + ' kWh' : '-- kWh');
-    setText('invTodayBattChg', _todayBattChgRaw !== null ? todayBattChg.toFixed(2) + ' kWh' : '-- kWh');
-    setText('invTodayBattDis', battDis1Raw      !== null ? battDis1.toFixed(2)     + ' kWh' : '-- kWh');
-    setText('invTodayLoad',    _todayLoadRaw    !== null ? todayLoad.toFixed(2)    + ' kWh' : '-- kWh');
-    // ── Remaining Ah + kWh ──
-    const totalRemAh = remCap1 + (dual ? (battSoc2 / 100) * fullAh : 0);
-    const avgVolt = dual && battVolt2 > 0 ? (battVolt1 + battVolt2) / 2 : battVolt1;
-    const totalRemKwh = avgVolt > 0 ? (totalRemAh * avgVolt / 1000) : null;
-    const invRemCapEl = getEl('invRemCap');
-    const invRemKwhEl = getEl('invRemKwh');
-    const remColor = this._remCapColor((remCap1 / fullAh) * 100);
-    if (invRemCapEl) { invRemCapEl.textContent = totalRemAh.toFixed(1) + ' Ah'; invRemCapEl.style.color = remColor; }
-    if (invRemKwhEl) {
-      invRemKwhEl.textContent = totalRemKwh !== null ? totalRemKwh.toFixed(2) + ' kWh' : '-- kWh';
-      invRemKwhEl.style.color = remColor;
-    }
 
     // ── Label entity overrides for stat tiles ──
     // Per-row: override active only when global gate ON AND label text ≠ its default
