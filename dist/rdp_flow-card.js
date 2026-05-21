@@ -1,4 +1,4 @@
-// k-flow-card.js – Unified Edition v1.1.1
+// rdp_flow-card.js – Unified Edition v1.1.1
 // Changes v1.1.1:
 //   - Sun position: replaced azimuth-based t (wrong at non-equatorial locations) with
 //     time-based t using today's actual rise/set, derived by correcting next_rising/
@@ -21,7 +21,7 @@
 // ═══════════════════════════════════════════════════════════════
 // VISUAL EDITOR
 // ═══════════════════════════════════════════════════════════════
-class KFlowCardEditor extends HTMLElement {
+class RdpFlowCardEditor extends HTMLElement {
   constructor() {
     super();
     this._config = {};
@@ -551,12 +551,12 @@ class KFlowCardEditor extends HTMLElement {
     this._rendered = true; // Fix #2: mark rendered so hass setter stops triggering full DOM rebuilds
   }
 }
-customElements.define('k-flow-card-editor', KFlowCardEditor);
+customElements.define('rdp_flow-card-editor', RdpFlowCardEditor);
 
 // ═══════════════════════════════════════════════════════════════
 // MAIN CARD
 // ═══════════════════════════════════════════════════════════════
-class KFlowCard extends HTMLElement {
+class RdpFlowCard extends HTMLElement {
   constructor() {
     super();
     this._hass = null;
@@ -638,10 +638,10 @@ class KFlowCard extends HTMLElement {
   }
 
   getCardSize() { return 8; }
-  static getConfigElement() { return document.createElement('k-flow-card-editor'); }
+  static getConfigElement() { return document.createElement('rdp_flow-card-editor'); }
 
   setConfig(config) {
-    this.config = { ...KFlowCard.getStubConfig(), ...config };
+    this.config = { ...RdpFlowCard.getStubConfig(), ...config };
     this._buildStaticSVG();
   }
 
@@ -785,7 +785,7 @@ class KFlowCard extends HTMLElement {
     const showBatt1 = !!(this.config._show_battery !== false);
     const ev   = !!(this.config._show_ev);
     const showPvExtra = !!(this.config._show_pv_extra);
-    const iconPath = '/local/community/k-flow-card';    // icons served from HACS community folder
+    const iconPath = '/local/community/rdp_flow-card';    // icons served from HACS community folder
 
     const pv3txt = showPvExtra ? `<text id="pv3label" x="8" y="424" font-size="9" fill="#8b949e" letter-spacing="1">PV3</text><text id="pv3FlowVal" x="8" y="438" font-size="12" font-weight="700" fill="#ffe83c">-- W</text>` : '';
     const pv4txt = showPvExtra ? `<text id="pv4label" x="8" y="456" font-size="9" fill="#8b949e" letter-spacing="1">PV4</text><text id="pv4FlowVal" x="8" y="470" font-size="12" font-weight="700" fill="#ffe83c">-- W</text>` : '';
@@ -1486,10 +1486,10 @@ class KFlowCard extends HTMLElement {
 }
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: 'k-flow-card',
+  type: 'rdp_flow-card',
   name: 'K-Flow Card',
   description: 'Real-time solar/battery/grid energy flow card with animated power paths, dual-battery support, EV charger integration, and per-tile label overrides.',
   preview: true,
   version: '1.0.2',
 });
-customElements.define('k-flow-card', KFlowCard);
+customElements.define('rdp_flow-card', RdpFlowCard);
