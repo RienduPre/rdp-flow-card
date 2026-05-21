@@ -1,7 +1,7 @@
-# rdp_flow-card
+# rdp-flow-card
 
 **Khan Automation — Home Assistant Custom Energy Flow Card**
-`rdp_flow-card.js` · Unified Edition  fixed some minor issues **V1.1.1**
+`rdp-flow-card.js` · Unified Edition  fixed some minor issues **V1.1.1**
 <img width="1708" height="2520" alt="IMG_20260513_114249" src="https://github.com/user-attachments/assets/e4c54570-5b9e-43c4-9326-b44d4105a5d1" />
 <img width="1108" height="1688" alt="IMG_20260516_011350" src="https://github.com/user-attachments/assets/6914d4ab-daa6-432a-983d-6abac15a1cac" />
 <img width="1114" height="1744" alt="IMG_20260516_011300" src="https://github.com/user-attachments/assets/ce97703f-ed71-4ab9-a79d-8d7cf3bcd3f6" />
@@ -10,7 +10,7 @@
 
 ## Overview
 
-`rdp_flow-card` is a fully custom Home Assistant Lovelace card that renders a live, animated energy-flow diagram for a GoodWe solar inverter system with JK BMS battery storage. It is self-contained in a single JavaScript file — no dependencies, no HACS card required beyond loading the resource.
+`rdp-flow-card` is a fully custom Home Assistant Lovelace card that renders a live, animated energy-flow diagram for a GoodWe solar inverter system with JK BMS battery storage. It is self-contained in a single JavaScript file — no dependencies, no HACS card required beyond loading the resource.
 
 The card combines an SVG energy-flow canvas (sun arc, animated flow paths, inverter, battery, grid, home, EV nodes) with an HTML stat panel showing real-time battery telemetry. Everything updates live via the standard `hass` setter.
 
@@ -38,11 +38,11 @@ The card combines an SVG energy-flow canvas (sun arc, animated flow paths, inver
 ### Method 1 — HACS (Recommended)
 
 1. In HACS, go to **Frontend → ⋮ → Custom repositories**
-2. Paste: `https://github.com/thekhan1122/rdp_flow-card` (without `.git`)
+2. Paste: `https://github.com/thekhan1122/rdp-flow-card` (without `.git`)
 3. Category: **Lovelace**
 4. Install the card – the resource is added automatically.
 5. Click the **+ Explore & Download Repositories** button.
-6. Search for **rdp_flow-card**.
+6. Search for **rdp-flow-card**.
 7. Click **Download** the resource is added automatically.
 8. **Hard refresh** your browser (`Ctrl + Shift + R` / `Cmd + Shift + R`).
 9. Open the visual editor to configure entities.
@@ -53,21 +53,21 @@ The card combines an SVG energy-flow canvas (sun arc, animated flow paths, inver
 
 ### Method 2 — Manual
 
-1. Copy `rdp_flow-card.js` to your HA config folder:
+1. Copy `rdp-flow-card.js` to your HA config folder:
    ```
-   /config/www/rdp_flow-card.js
+   /config/www/rdp-flow-card.js
    ```
 
 2. Register as a Lovelace resource:
    *(Settings → Dashboards → Resources → Add)*
    ```yaml
-   url: /local/rdp_flow-card.js
+   url: /local/rdp-flow-card.js
    type: module
    ```
 
 3. Add to a dashboard view:
    ```yaml
-   type: custom:rdp_flow-card
+   type: custom:rdp-flow-card
    ```
 
 4. Open the visual editor to configure entities.
@@ -271,7 +271,7 @@ All keys are configured through the visual editor. The YAML equivalents are list
 ## File Structure
 
 ```
-rdp_flow-card.js
+rdp-flow-card.js
 │
 ├── class RdpFlowCardEditor   (visual editor — HTMLElement, shadow DOM)
 │   ├── _render()           builds editor sections
@@ -312,17 +312,17 @@ rdp_flow-card.js
 
 ### Card does not appear / shows "Custom element doesn't exist"
 
-- Confirm the resource is registered: **Settings → Dashboards → Resources**. You should see `/hacsfiles/rdp_flow-card/rdp_flow-card.js` (HACS) or `/local/rdp_flow-card.js` (manual) with type `JavaScript Module`.
+- Confirm the resource is registered: **Settings → Dashboards → Resources**. You should see `/hacsfiles/rdp-flow-card/rdp-flow-card.js` (HACS) or `/local/rdp-flow-card.js` (manual) with type `JavaScript Module`.
 - Hard refresh the browser: `Ctrl + Shift + R` (Windows/Linux) or `Cmd + Shift + R` (Mac).
 - If using the mobile app, clear app cache or force-close and reopen.
-- If installed manually, confirm the file is at `/config/www/rdp_flow-card.js` — not inside a subfolder.
+- If installed manually, confirm the file is at `/config/www/rdp-flow-card.js` — not inside a subfolder.
 
 ---
 
 ### Visual editor is blank or fails to load
 
-- Open browser DevTools (`F12`) → Console tab. Look for any red errors referencing `rdp_flow-card`.
-- Ensure no other version of `rdp_flow-card.js` is registered as a duplicate resource. Go to Resources and remove any stale entries.
+- Open browser DevTools (`F12`) → Console tab. Look for any red errors referencing `rdp-flow-card`.
+- Ensure no other version of `rdp-flow-card.js` is registered as a duplicate resource. Go to Resources and remove any stale entries.
 - Try clearing the HA frontend cache: **Developer Tools → Template** → reload page.
 
 ---
@@ -370,7 +370,7 @@ rdp_flow-card.js
 ### After update via HACS, card looks wrong or broken
 
 1. Hard refresh the browser (`Ctrl + Shift + R`).
-2. If the issue persists, go to **Settings → Dashboards → Resources**, delete the rdp_flow-card entry, then re-add it (HACS will re-register it on the next HA restart).
+2. If the issue persists, go to **Settings → Dashboards → Resources**, delete the rdp-flow-card entry, then re-add it (HACS will re-register it on the next HA restart).
 3. Restart Home Assistant and hard refresh again.
 
 ---
@@ -379,10 +379,10 @@ rdp_flow-card.js
 
 When reporting an issue, include:
 - Home Assistant version
-- rdp_flow-card version (visible in browser DevTools console on load)
+- rdp-flow-card version (visible in browser DevTools console on load)
 - Browser console errors (screenshot or copy-paste)
 - Relevant section of your card YAML config (remove sensitive entity names if needed)
 
 ---
 
-*Khan Automation · rdp_flow-card · Last updated: v1.1.1*
+*Khan Automation · rdp-flow-card · Last updated: v1.1.1*
