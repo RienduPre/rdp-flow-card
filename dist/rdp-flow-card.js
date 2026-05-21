@@ -964,24 +964,8 @@ class RdpFlowCard extends HTMLElement {
         <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase">Pwr</span><div style="flex:1;background:#21262d;border-radius:20px;height:9px;overflow:hidden;position:relative"><div id="pwrBar" style="position:absolute;inset:0;right:auto;width:0%;border-radius:20px;background:#3fb950;transition:width .4s,background .4s"></div></div></div>
       </div>
       <div class="dv"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:5px">
-        <div class="st"><div class="l">${this.config.label_cell_temp_minmax || 'CELL TEMP MIN/MAX'}</div><div class="v" id="bTemp1">-- °C</div></div>
-        <div class="st"><div class="l">${this.config.label_bms_temp || 'BMS TEMP'}</div><div class="v" id="bTemp2">-- °C</div></div>
+      <div style="margin-top:5px">
         <div class="st"><div class="l">${this.config.label_total_pv_gen || 'TOTAL PV GEN.'}</div><div class="v" id="bTotalPvGen">-- kWh</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:4px">
-        <div class="st"><div class="l">${this.config.label_min_cell || 'Min Cell'}</div><div class="v" id="bMinCell">-- V</div></div>
-        <div class="st"><div class="l">${this.config.label_max_cell || 'Max Cell'}</div><div class="v" id="bMaxCell">-- V</div></div>
-        <div class="st"><div class="l">${this.config.label_batt_dis || 'Batt Dis.'}</div><div class="v" id="bBattDis">-- kWh</div></div>
-      </div>
-      <div style="margin-top:4px">
-        <div class="st" style="display:flex;flex-direction:row;align-items:flex-end;justify-content:space-between;gap:8px;padding:4px 9px 5px;width:100%;box-sizing:border-box">
-          <div class="l" id="bEnduStatLbl" style="margin-bottom:0;white-space:nowrap;line-height:1.4">${this.config.label_endurance || 'ENDURANCE'}</div>
-          <div style="display:flex;align-items:flex-end;gap:10px;flex-shrink:0">
-            <div class="v" id="bEnduranceStat" style="font-size:.88rem;line-height:1.2">--</div>
-            <div id="bEnduranceTime" style="font-size:.58rem;color:#8b949e;letter-spacing:.3px;white-space:nowrap;line-height:1.4">Till --</div>
-          </div>
-        </div>
       </div>
     </div>`;
   }
@@ -1016,25 +1000,11 @@ class RdpFlowCard extends HTMLElement {
     let battCurr1 = _nullOr0(this._val(this.config.battery_current) ?? this._val(this.config.goodwe_battery_curr));
     if (this.config.invert_battery_power) battCurr1 = -battCurr1;
     const battVolt1 = _n(this._val(this.config.battery_voltage));
-    const temp1_1 = _n(this._val(this.config.battery_temp1));
-    const temp2_1 = _n(this._val(this.config.battery_temp2));
-    const mos1 = _n(this._val(this.config.battery_mos));
-    const minCell1 = _n(this._val(this.config.battery_min_cell));
-    const maxCell1 = _n(this._val(this.config.battery_max_cell));
-    const battDis1Raw = this._val(this.config.batt_dis);
-    const battDis1 = _n(battDis1Raw);
     const invTemp = _n(this._val(this.config.inv_temp));
 
     // System limits – direct numbers
-    const fullAh = Number(this.config.battery_full_ah) || 314;
-    const fullWh = Number(this.config.battery_full_wh) || 16076;
     const invMax = Number(this.config.inverter_max_power) || 6000;
     const pvMax = Number(this.config.pv_max_power) || 7500;
-
-    const remCap1 = (battSoc1 / 100) * fullAh;
-    // Fix #14: dual-battery charging ETA was assuming both packs have identical Wh.
-    // Use battery2_full_wh config if provided; fall back to fullWh (battery1 capacity).
-    const fullWh2 = Number(this.config.battery2_full_wh) || fullWh;
 
     const dual = !!(this.config._show_battery2);
     const battSoc2 = dual ? _n(this._val(this.config.battery2_soc)) : 0;
@@ -1042,7 +1012,6 @@ class RdpFlowCard extends HTMLElement {
     let battCurr2 = dual ? _nullOr0(this._val(this.config.battery2_current)) : 0;
     if (dual && this.config.invert_battery_power) { battPwr2 = -battPwr2; battCurr2 = -battCurr2; }
     const battVolt2 = dual ? _n(this._val(this.config.battery2_voltage)) : 0;
-    const mos2 = dual ? _n(this._val(this.config.battery2_mos)) : 0;
 
     const chargerPower = _n(this._val(this.config.charger_power, true));
     const chargerCurrent = _n(this._val(this.config.charger_current));
@@ -1145,8 +1114,6 @@ class RdpFlowCard extends HTMLElement {
       const bolt1 = getEl('battBoltGroup1'), bolt2 = getEl('battBoltGroup2');
       if (bolt1) bolt1.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
       if (bolt2) bolt2.setAttribute('opacity', (battPwr2 > 10 && Math.abs(battPwr2) >= 10) ? '1' : '0');
-      // Fix #16: bTemp1/bTemp2 written once below in the label override block — skip early write
-      // bMinCell, bMaxCell, bBattDis handled by label override block below
     } else {
       const fill = this._battFill(battSoc1);
       const bf = getEl('battFillBar'); if (bf) { bf.setAttribute('y', fill.y); bf.setAttribute('height', fill.height); bf.setAttribute('fill', fill.color); bf.setAttribute('filter', fill.filter); }
@@ -1156,39 +1123,8 @@ class RdpFlowCard extends HTMLElement {
       setText('battPwrFlow', absPwr1.toFixed(0) + ' W');
       setText('battCurrFlow', battCurr1.toFixed(1) + ' A');
       const bolt = getEl('battBoltGroup'); if (bolt) bolt.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
-      // Fix #16: bTemp1/bTemp2 written once below in the label override block — skip early write
-      // bMinCell, bMaxCell, bBattDis handled by label override block below
     }
 
-    // Color and value for cell tiles — handled by label override block below
-
-    // Endurance
-    let endHours = null, endText = '--', endColor = '#8b949e', isETA = false;
-    const _socPct = (remCap1 / fullAh) * 100;
-    if (dual) {
-      // Fix: use fullWh2 for battery2's Wh contribution so mixed-capacity packs are handled correctly.
-      // Compute each battery's remaining Wh independently from their SOC and configured capacities.
-      const totalRemWh = (battSoc1 / 100) * fullWh + (battSoc2 / 100) * fullWh2;
-      const totalPower = battPwr1 + battPwr2;
-      if (totalPower < -10) {
-        endHours = totalRemWh / Math.abs(totalPower);
-        endText = this._fmtEndurance(endHours); endColor = this._remCapColor(_socPct);
-      } else if (totalPower > 10) {
-        const missingWh = (fullWh + fullWh2) - totalRemWh;
-        endHours = Math.max(0, missingWh / totalPower);
-        endText = this._fmtEndurance(endHours); endColor = '#00d7ff'; isETA = true;
-      }
-    } else {
-      const remWh = (remCap1 / fullAh) * fullWh;
-      if (battPwr1 < -10) {
-        endHours = remWh / Math.abs(battPwr1);
-        endText = this._fmtEndurance(endHours); endColor = this._remCapColor(_socPct);
-      } else if (battPwr1 > 10) {
-        const missingWh = ((fullAh - remCap1) / fullAh) * fullWh;
-        endHours = Math.max(0, missingWh / Math.abs(battPwr1));
-        endText = this._fmtEndurance(endHours); endColor = '#00d7ff'; isETA = true;
-      }
-    }
     // Total PV Generation stat tile
     const _totalPvGenEl = getEl('bTotalPvGen');
     if (_totalPvGenEl) {
@@ -1298,100 +1234,6 @@ class RdpFlowCard extends HTMLElement {
       }
       return { text, color };
     };
-
-    // Cell temp tile
-    const cellTempCustom = _rowActive('label_cell_temp_minmax', 'CELL TEMP MIN/MAX') && this.config.label_entity_cell_temp;
-    const temp1Final = cellTempCustom ? _readNum('label_entity_cell_temp', temp1_1) : temp1_1;
-    const cellTempUnit = cellTempCustom ? _readUnit('label_entity_cell_temp') : '°C';
-
-    // BMS temp tile
-    const bmsTempCustom = _rowActive('label_bms_temp', 'BMS TEMP') && this.config.label_entity_bms_temp;
-    const mosFinal = bmsTempCustom ? _readNum('label_entity_bms_temp', mos1) : mos1;
-    const bmsTempUnit = bmsTempCustom ? _readUnit('label_entity_bms_temp') : '°C';
-
-    // Min cell tile
-    const minCellCustom = _rowActive('label_min_cell', 'Min Cell') && this.config.label_entity_min_cell;
-    const minCellFinal = minCellCustom ? _readNum('label_entity_min_cell', minCell1) : minCell1;
-    const minCellUnit  = minCellCustom ? _readUnit('label_entity_min_cell') : 'V';
-
-    // Max cell tile
-    const maxCellCustom = _rowActive('label_max_cell', 'Max Cell') && this.config.label_entity_max_cell;
-    const maxCellFinal = maxCellCustom ? _readNum('label_entity_max_cell', maxCell1) : maxCell1;
-    const maxCellUnit  = maxCellCustom ? _readUnit('label_entity_max_cell') : 'V';
-
-    // Batt dis tile
-    const battDisCustom = _rowActive('label_batt_dis', 'Batt Dis.') && this.config.label_entity_batt_dis;
-    const battDisFinal  = battDisCustom ? _readNum('label_entity_batt_dis', battDis1) : battDis1;
-    const battDisUnit   = battDisCustom ? _readUnit('label_entity_batt_dis') : 'kWh';
-
-    // ── Apply overrides to stat tiles ──
-    // Fix #16: bTemp1 is only written here (removed redundant native write above)
-    const _bT1o = getEl('bTemp1');
-    if (_bT1o) {
-      if (cellTempCustom) {
-        const fmt = _fmtCustom(temp1Final, cellTempUnit);
-        _bT1o.textContent = fmt.text;
-        _bT1o.style.color = fmt.color;
-      } else {
-        _bT1o.textContent = temp1Final.toFixed(1) + ' / ' + temp2_1.toFixed(1) + ' °C';
-        _bT1o.style.color = this._cellTempColor(Math.max(temp1Final, temp2_1));
-      }
-    }
-    // Fix #10: BMS temp override replaces the entire tile — never mix custom source with native battery2 MOS
-    const _bT2o = getEl('bTemp2');
-    if (_bT2o) {
-      if (bmsTempCustom) {
-        const fmt = _fmtCustom(mosFinal, bmsTempUnit);
-        _bT2o.textContent = fmt.text;
-        _bT2o.style.color = fmt.color;
-      } else {
-        _bT2o.textContent = mosFinal.toFixed(1) + (dual ? ' / ' + mos2.toFixed(1) : '') + ' °C';
-        _bT2o.style.color = this._cellTempColor(dual ? Math.max(mosFinal, mos2) : mosFinal);
-      }
-    }
-    const _bMno = getEl('bMinCell');
-    if (_bMno) {
-      if (minCellCustom) {
-        const fmt = _fmtCustom(minCellFinal, minCellUnit);
-        _bMno.textContent = fmt.text;
-        _bMno.style.color = fmt.color;
-      } else {
-        _bMno.textContent = minCellFinal.toFixed(3) + ' V';
-        _bMno.style.color = this._cellVoltColor(minCellFinal);
-      }
-    }
-    const _bMxo = getEl('bMaxCell');
-    if (_bMxo) {
-      if (maxCellCustom) {
-        const fmt = _fmtCustom(maxCellFinal, maxCellUnit);
-        _bMxo.textContent = fmt.text;
-        _bMxo.style.color = fmt.color;
-      } else {
-        _bMxo.textContent = maxCellFinal.toFixed(3) + ' V';
-        _bMxo.style.color = this._cellVoltColor(maxCellFinal);
-      }
-    }
-    const _bDiso = getEl('bBattDis');
-    if (_bDiso) {
-      if (battDisCustom) {
-        const fmt = _fmtCustom(battDisFinal, battDisUnit);
-        _bDiso.textContent = fmt.text;
-        _bDiso.style.color = fmt.color;
-      } else {
-        _bDiso.textContent = battDis1.toFixed(2) + ' kWh';
-        _bDiso.style.color = '';
-      }
-    }
-
-    // ── HTML stat tile — endurance ──
-    // Fix #13: remove ETA duplication — label says ETA, value shows only the duration
-    const _tillStr = this._fmtTill(endHours);
-    const _bEnduStat = getEl('bEnduranceStat');
-    if (_bEnduStat) { _bEnduStat.textContent = endText; _bEnduStat.style.color = endColor; }
-    const _bEnduStatLbl = getEl('bEnduStatLbl');
-    if (_bEnduStatLbl) _bEnduStatLbl.textContent = isETA ? 'ETA' : (this.config.label_endurance || 'ENDURANCE');
-    const _bEnduTimeEl = getEl('bEnduranceTime');
-    if (_bEnduTimeEl) { _bEnduTimeEl.textContent = _tillStr; _bEnduTimeEl.style.color = endHours !== null ? endColor : '#8b949e'; }
 
     const pvBlocks = getEl('pvBlocks');
     // Fix #11: guard pvBlocks rebuild (was regenerating 20 divs on every state update)
