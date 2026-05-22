@@ -643,9 +643,24 @@ class RdpFlowCard extends HTMLElement {
   setConfig(config) {
     this.config = { ...RdpFlowCard.getStubConfig(), ...config };
     this._buildStaticSVG();
+    const isDark = this._hass?.themes?.darkMode !== false;
+    this._applyTheme(isDark);
   }
 
-  set hass(hass) { this._hass = hass; this._updateDynamic(); }
+  set hass(hass) {
+    const prevDark = this._hass?.themes?.darkMode;
+    this._hass = hass;
+    const nowDark = hass?.themes?.darkMode !== false;
+    if (prevDark !== nowDark) this._applyTheme(nowDark);
+    this._updateDynamic();
+  }
+
+  _applyTheme(isDark) {
+    if (isDark) this.classList.remove('light-mode');
+    else this.classList.add('light-mode');
+    const invRect = this.shadowRoot?.getElementById('fcInvRect');
+    if (invRect) invRect.setAttribute('fill', isDark ? '#161b22' : '#f0f6fc');
+  }
 
   _val(eid, toWatts = false) {
     if (!eid) return null;
@@ -857,21 +872,30 @@ class RdpFlowCard extends HTMLElement {
     );
 
     this.shadowRoot.innerHTML = `<style>
-      :host{display:block} @keyframes svgPulseOrange{0%,100%{filter:drop-shadow(0 0 5px #f39c4b)}50%{filter:drop-shadow(0 0 8px #f39c4bff)}}
-      .st{background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:7px 9px}
-      .st .l{font-size:.48rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
-      .st .v{font-size:.8rem;font-weight:600;color:#c9d1d9}
-      .dv{height:1px;background:#21262d;margin:8px 0}
-      .ct{font-size:.56rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b949e;margin-bottom:10px;display:flex;align-items:center;gap:7px}
-      .ct::after{content:'';flex:1;height:1px;background:#21262d}
+      :host{display:block;
+        --c-bg:#161b22;--c-border:#21262d;--c-tile:#0d1117;
+        --c-text:#c9d1d9;--c-muted:#8b949e;--c-shadow:rgba(0,0,0,.4);
+        --c-inv:#161b22;--c-pv-empty:#21262d}
+      :host(.light-mode){
+        --c-bg:#ffffff;--c-border:#d0d7de;--c-tile:#f6f8fa;
+        --c-text:#1f2328;--c-muted:#57606a;--c-shadow:rgba(0,0,0,.08);
+        --c-inv:#f0f6fc;--c-pv-empty:#d0d7de}
+      @keyframes svgPulseOrange{0%,100%{filter:drop-shadow(0 0 5px #f39c4b)}50%{filter:drop-shadow(0 0 8px #f39c4bff)}}
+      .wrap{background:var(--c-bg);border:1px solid var(--c-border);border-radius:12px;padding:13px;box-shadow:0 4px 20px var(--c-shadow);width:100%;box-sizing:border-box}
+      .st{background:var(--c-tile);border:1px solid var(--c-border);border-radius:8px;padding:7px 9px}
+      .st .l{font-size:.48rem;color:var(--c-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+      .st .v{font-size:.8rem;font-weight:600;color:var(--c-text)}
+      .dv{height:1px;background:var(--c-border);margin:8px 0}
+      .ct{font-size:.56rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--c-muted);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+      .ct::after{content:'';flex:1;height:1px;background:var(--c-border)}
       .pvf{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:2px}
-      .pvi{text-align:center;background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:6px 2px}
+      .pvi{text-align:center;background:var(--c-tile);border:1px solid var(--c-border);border-radius:8px;padding:6px 2px}
       .pvi .ico{font-size:.95rem;margin-bottom:2px}
-      .pvi .lbl{font-size:.44rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
-      .pvi .val{font-size:.76rem;font-weight:700;color:#c9d1d9}
+      .pvi .lbl{font-size:.44rem;color:var(--c-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+      .pvi .val{font-size:.76rem;font-weight:700;color:var(--c-text)}
       .pvi .val.yw{color:#f4d03f} text{font-family:'Segoe UI',Arial,sans-serif}
     </style>
-    <div style="background:#161b22;border:1px solid #21262d;border-radius:12px;padding:13px;box-shadow:0 4px 20px rgba(0,0,0,.4);width:100%;box-sizing:border-box;">
+    <div class="wrap">
       <div class="ct">⚡ Energy Flow</div>
       <div style="width:100%;max-width:520px;margin:0 auto"><svg id="flowSvg" viewBox="0 0 520 470" style="width:100%;display:block">
       <defs>
@@ -960,8 +984,8 @@ class RdpFlowCard extends HTMLElement {
       </svg></div>`+
 
       `<div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-        <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase">PV</span><div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:10px" id="pvBlocks"></div></div>
-        <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase">Pwr</span><div style="flex:1;background:#21262d;border-radius:20px;height:9px;overflow:hidden;position:relative"><div id="pwrBar" style="position:absolute;inset:0;right:auto;width:0%;border-radius:20px;background:#3fb950;transition:width .4s,background .4s"></div></div></div>
+        <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:var(--c-muted);letter-spacing:1px;text-transform:uppercase">PV</span><div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:10px" id="pvBlocks"></div></div>
+        <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:var(--c-muted);letter-spacing:1px;text-transform:uppercase">Pwr</span><div style="flex:1;background:var(--c-pv-empty);border-radius:20px;height:9px;overflow:hidden;position:relative"><div id="pwrBar" style="position:absolute;inset:0;right:auto;width:0%;border-radius:20px;background:#3fb950;transition:width .4s,background .4s"></div></div></div>
       </div>
     </div>`;
   }
@@ -1218,7 +1242,7 @@ class RdpFlowCard extends HTMLElement {
     // Fix #11: guard pvBlocks rebuild (was regenerating 20 divs on every state update)
     if (pvBlocks && pvTotal !== this._prevPvBlocksTotal) {
       this._prevPvBlocksTotal = pvTotal;
-      const lit = Math.round((pvTotal / pvMax) * 20); const heights = [20, 35, 50, 60, 70, 80, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]; let html = ''; for (let i = 0; i < 20; i++) html += `<div style="flex:1;background:${i < lit ? 'rgba(255,255,255,0.55)' : '#21262d'};height:${i < lit ? heights[i] : 100}%;opacity:${i < lit ? 1 : 0.35};border-radius:2px;"></div>`; pvBlocks.innerHTML = html;
+      const lit = Math.round((pvTotal / pvMax) * 20); const heights = [20, 35, 50, 60, 70, 80, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]; let html = ''; for (let i = 0; i < 20; i++) html += `<div style="flex:1;background:${i < lit ? 'rgba(255,255,255,0.55)' : 'var(--c-pv-empty)'};height:${i < lit ? heights[i] : 100}%;opacity:${i < lit ? 1 : 0.35};border-radius:2px;"></div>`; pvBlocks.innerHTML = html;
     }
 
     // EV
