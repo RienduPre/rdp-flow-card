@@ -895,7 +895,7 @@ class RdpFlowCard extends HTMLElement {
       .pvi .val{font-size:.76rem;font-weight:700;color:var(--c-text)}
       .pvi .val.yw{color:#f4d03f} text{font-family:'Segoe UI',Arial,sans-serif}
       .icon-img{mix-blend-mode:screen}
-      :host(.light-mode) .icon-img{mix-blend-mode:multiply}
+      :host(.light-mode) .icon-img{mix-blend-mode:normal}
       .svg-dim{fill:#8b949e}
       :host(.light-mode) .svg-dim{fill:#57606a}
     </style>
