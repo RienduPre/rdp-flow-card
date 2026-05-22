@@ -872,7 +872,7 @@ class RdpFlowCard extends HTMLElement {
       .pvi .val.yw{color:#f4d03f} text{font-family:'Segoe UI',Arial,sans-serif}
     </style>
     <div style="background:#161b22;border:1px solid #21262d;border-radius:12px;padding:13px;box-shadow:0 4px 20px rgba(0,0,0,.4);width:100%;box-sizing:border-box;">
-      <div class="ct">⚡ Energy Flow <span id="battStatusBadge" style="margin-left:auto;font-size:.5rem;font-weight:700;letter-spacing:1.5px;padding:1px 8px;border-radius:8px;background:#21262d;color:#8b949e;text-transform:uppercase">IDLE</span></div>
+      <div class="ct">⚡ Energy Flow</div>
       <div style="width:100%;max-width:520px;margin:0 auto"><svg id="flowSvg" viewBox="0 0 520 470" style="width:100%;display:block">
       <defs>
         <filter id="arcSunF" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="7"/></filter>
@@ -1127,8 +1127,6 @@ class RdpFlowCard extends HTMLElement {
       pwrBar.style.background = absPwr1 < 50 ? '#8b949e' : isCharging1 ? '#2b59ff' :
         'linear-gradient(to right, #f4d03f, #f39c4b ' + ((absPwr1 / invMax * 100) * 0.5).toFixed(0) + '%, #f85149)';
     }
-    const badge = getEl('battStatusBadge');
-    if (badge) { badge.textContent = absPwr1 < 50 ? 'IDLE' : isCharging1 ? 'CHG' : 'DISCHG'; badge.style.color = absPwr1 < 50 ? '#8b949e' : isCharging1 ? '#00d7ff' : '#3ce878'; }
 
     setText('invTempFlow', invTemp.toFixed(1) + ' °C');
     setText('invNameLabel', this.config.inverter_name || 'INV');
