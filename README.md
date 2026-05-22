@@ -218,7 +218,7 @@ Include: HA version · rdp-flow-card version · browser console errors · releva
 
 ## Changelog
 
-### v1.1.1
+### v1.0
 - Dark / light mode: automatic theme detection via `hass.themes.darkMode`; all colours driven by CSS custom properties
 - Icon images rendered with `mix-blend-mode: screen` for transparency on any background
 - Removed: battery status badge (CHG/DISCHG/IDLE) from card header

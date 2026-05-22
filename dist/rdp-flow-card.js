@@ -1,5 +1,5 @@
-// rdp-flow-card.js – Unified Edition v1.1.1
-// Changes v1.1.1:
+// rdp-flow-card.js – Unified Edition v1.0
+// Changes v1.0:
 //   - Sun position: replaced azimuth-based t (wrong at non-equatorial locations) with
 //     time-based t using today's actual rise/set, derived by correcting next_rising/
 //     next_setting when they refer to tomorrow (>18 h away).
