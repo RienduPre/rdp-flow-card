@@ -611,7 +611,7 @@ class RdpFlowCard extends HTMLElement {
       charger_eta: '',
       charger_battery_capacity_wh: '',
       sun: 'sun.sun',
-      inverter_name: '',
+      inverter_name: 'Inverter',
       label_cell_temp_minmax: 'CELL TEMP MIN/MAX',
       label_bms_temp: 'BMS TEMP',
       label_endurance: 'ENDURANCE',
@@ -660,6 +660,7 @@ class RdpFlowCard extends HTMLElement {
     else this.classList.add('light-mode');
     const invRect = this.shadowRoot?.getElementById('fcInvRect');
     if (invRect) invRect.setAttribute('fill', isDark ? '#161b22' : '#f0f6fc');
+    this._prevPvBlocksTotal = -1;
   }
 
   _val(eid, toWatts = false) {
@@ -782,7 +783,7 @@ class RdpFlowCard extends HTMLElement {
 
   _battFill(soc){
     const ft=145,fb=263,fh=118;const fH=Math.round((soc||0)/100*fh),fY=fb-fH;let c,f,tc;
-    if(soc<=20){c='#ff2200';f='url(#battGlowRed)';tc='#000';}else if(soc<=40){c='#f4d03f';f='url(#battGlowOrange)';tc='#000';}else if(soc<=75){c='#44ff00';f='url(#battGlowGreen)';tc='#fff';}else{c='#00d4ff';f='url(#battGlowCyan)';tc='#fff';}
+    if(soc<=20){c='#ff2200';f='url(#battGlowRed)';tc='#000';}else if(soc<=40){c='#f4d03f';f='url(#battGlowOrange)';tc='#000';}else if(soc<=75){c='#44ff00';f='url(#battGlowGreen)';tc='#000';}else{c='#00d4ff';f='url(#battGlowCyan)';tc='#000';}
     return{y:fY,height:fH,color:c,filter:fH>4?f:'none',textColor:tc};
   }
 
@@ -822,13 +823,10 @@ class RdpFlowCard extends HTMLElement {
     // Battery current/power placed OUTSIDE the transformed group, above/below the flow bar (center y=175)
     const battTextSingle = `
       <text id="battPwrFlow" x="75" y="165" font-size="10" font-weight="600" class="svg-dim" fill="#8b949e">-- W</text>
-      <text id="battCurrFlow" x="75" y="196" font-size="10" font-weight="600" fill="#fff">-- A</text>
     `;
     const battTextDual = `
       <text id="battPwrFlow1" x="75" y="158" font-size="10" font-weight="600" class="svg-dim" fill="#8b949e">-- W</text>
       <text id="battPwrFlow2" x="75" y="171" font-size="10" font-weight="600" class="svg-dim" fill="#8b949e">-- W</text>
-      <text id="battCurrFlow1" x="75" y="196" font-size="10" font-weight="600" fill="#fff">-- A</text>
-      <text id="battCurrFlow2" x="75" y="209" font-size="10" font-weight="600" fill="#fff">-- A</text>
     `;
 
     const batteryTip = `<rect x="75" y="126" width="18" height="4" rx="2" fill="url(#battCapGrad)"/>`;
@@ -858,14 +856,11 @@ class RdpFlowCard extends HTMLElement {
             <g id="battBoltGroup2" opacity="0"><polygon points="104,176 96,195 102,195 98,215 110,193 104,193 112,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
             <text id="fcBattVal1" x="68" y="208" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">--%</text>
             <text id="fcBattVal2" x="100" y="208" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">--%</text>
-            <text id="battVoltageFlow1" x="68" y="278" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">-- V</text>
-            <text id="battVoltageFlow2" x="100" y="278" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">-- V</text>
           ` : `
             <rect id="battFillBar" x="53" y="263" width="62" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClip)"/>
             <rect id="battFillHL" x="53" y="263" width="62" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClip)" style="pointer-events:none"/>
             <g id="battBoltGroup" opacity="0"><polygon points="86,176 74,199 82,199 77,223 93,195 85,195 97,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
             <text id="fcBattVal" x="84" y="211" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">--%</text>
-            <text id="battVoltageFlow" x="84" y="285" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">-- V</text>
           `) +
       `</g>
       </g>`
@@ -975,8 +970,8 @@ class RdpFlowCard extends HTMLElement {
 
       <rect id="fcInvRect" x="205" y="155" width="110" height="110" rx="18" fill="#161b22" stroke="#f4a93b" stroke-width="4"/>
       <text id="invNameLabel" x="260" y="203" text-anchor="middle" font-size="14" font-weight="800" fill="#f4a93b" letter-spacing="1">INV</text>
-      <text id="invTempFlow" x="260" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#58a6ff">-- °C</text>
-      <text id="invLoadPctFlow" x="260" y="240" text-anchor="middle" font-size="12" font-weight="700" fill="#3ce878">--%</text>
+      <text id="invLoadPctFlow" x="260" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#3ce878">--%</text>
+      <text x="260" y="248" text-anchor="middle" font-size="14" fill="#f4a93b" opacity="0.85">▼</text>
 
       <text id="pv1label" x="8" y="360" font-size="9" fill="#8b949e" letter-spacing="1">PV1</text>
       <text id="pv1FlowVal" x="8" y="374" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>
@@ -1133,12 +1128,8 @@ class RdpFlowCard extends HTMLElement {
       const bh2 = getEl('battFillHL2'); if (bh2) { bh2.setAttribute('y', fill2.y); bh2.setAttribute('height', fill2.height); }
       setText('fcBattVal1', battSoc1 + '%'); setAttr('fcBattVal1', 'fill', fill1.textColor);
       setText('fcBattVal2', battSoc2 + '%'); setAttr('fcBattVal2', 'fill', fill2.textColor);
-      setText('battVoltageFlow1', battVolt1.toFixed(1) + ' V'); setText('battVoltageFlow2', battVolt2.toFixed(1) + ' V');
-      // Current & power placed outside battery group
       setText('battPwrFlow1', Math.abs(battPwr1).toFixed(0) + ' W');
-      setText('battCurrFlow1', battCurr1.toFixed(1) + ' A'); setAttr('battCurrFlow1', 'fill', clr('#fff', '#1f2328'));
       setText('battPwrFlow2', Math.abs(battPwr2).toFixed(0) + ' W');
-      setText('battCurrFlow2', battCurr2.toFixed(1) + ' A'); setAttr('battCurrFlow2', 'fill', clr('#fff', '#1f2328'));
       const bolt1 = getEl('battBoltGroup1'), bolt2 = getEl('battBoltGroup2');
       if (bolt1) bolt1.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
       if (bolt2) bolt2.setAttribute('opacity', (battPwr2 > 10 && Math.abs(battPwr2) >= 10) ? '1' : '0');
@@ -1147,9 +1138,7 @@ class RdpFlowCard extends HTMLElement {
       const bf = getEl('battFillBar'); if (bf) { bf.setAttribute('y', fill.y); bf.setAttribute('height', fill.height); bf.setAttribute('fill', fill.color); bf.setAttribute('filter', fill.filter); }
       const bh = getEl('battFillHL'); if (bh) { bh.setAttribute('y', fill.y); bh.setAttribute('height', fill.height); }
       setText('fcBattVal', battSoc1 + '%'); setAttr('fcBattVal', 'fill', fill.textColor);
-      setText('battVoltageFlow', battVolt1.toFixed(1) + ' V');
       setText('battPwrFlow', absPwr1.toFixed(0) + ' W');
-      setText('battCurrFlow', battCurr1.toFixed(1) + ' A'); setAttr('battCurrFlow', 'fill', clr('#fff', '#1f2328'));
       const bolt = getEl('battBoltGroup'); if (bolt) bolt.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
     }
 
@@ -1160,11 +1149,8 @@ class RdpFlowCard extends HTMLElement {
         'linear-gradient(to right, #f4d03f, #f39c4b ' + ((absPwr1 / invMax * 100) * 0.5).toFixed(0) + '%, #f85149)';
     }
 
-    setText('invTempFlow', invTemp.toFixed(1) + ' °C');
-    setText('invNameLabel', this.config.inverter_name || 'INV');
-    setAttr('invTempFlow', 'fill', invTemp <= 45 ? clr('#58a6ff', '#0055b3') : invTemp <= 55 ? clr('#f39c4b', '#c07320') : clr('#f85149', '#d42000'));
+    setText('invNameLabel', this.config.inverter_name || 'Inverter');
     const invLoadPct = Math.min(load / invMax * 100, 100).toFixed(0);
-    // Fix #8: toFixed() returns a string; use Number() for the colour comparison
     setText('invLoadPctFlow', invLoadPct + '%'); setAttr('invLoadPctFlow', 'fill', Number(invLoadPct) <= 50 ? clr('#3fb950', '#186f2c') : clr('#f39c4b', '#c07320'));
 
     const gridDir = gridActive > 10 ? '▼ ' : gridActive < -10 ? '▲ ' : '';
@@ -1250,7 +1236,7 @@ class RdpFlowCard extends HTMLElement {
     // Fix #11: guard pvBlocks rebuild (was regenerating 20 divs on every state update)
     if (pvBlocks && pvTotal !== this._prevPvBlocksTotal) {
       this._prevPvBlocksTotal = pvTotal;
-      const lit = Math.round((pvTotal / pvMax) * 20); const heights = [20, 35, 50, 60, 70, 80, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]; let html = ''; for (let i = 0; i < 20; i++) html += `<div style="flex:1;background:${i < lit ? 'rgba(255,255,255,0.55)' : 'var(--c-pv-empty)'};height:${i < lit ? heights[i] : 100}%;opacity:${i < lit ? 1 : 0.35};border-radius:2px;"></div>`; pvBlocks.innerHTML = html;
+      const lit = Math.round((pvTotal / pvMax) * 20); const heights = [20, 35, 50, 60, 70, 80, 90, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]; const litColor = clr('rgba(255,255,255,0.55)', 'rgba(120,85,0,0.75)'); let html = ''; for (let i = 0; i < 20; i++) html += `<div style="flex:1;background:${i < lit ? litColor : 'var(--c-pv-empty)'};height:${i < lit ? heights[i] : 100}%;opacity:${i < lit ? 1 : 0.35};border-radius:2px;"></div>`; pvBlocks.innerHTML = html;
     }
 
     // EV
