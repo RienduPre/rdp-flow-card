@@ -1,6 +1,6 @@
 # rdp-flow-card
 
-**Khan Automation — Home Assistant Custom Energy Flow Card**
+**Home Assistant Custom Energy Flow Card**
 `rdp-flow-card.js` · Unified Edition  fixed some minor issues **V1.1.1**
 <img width="1708" height="2520" alt="IMG_20260513_114249" src="https://github.com/user-attachments/assets/e4c54570-5b9e-43c4-9326-b44d4105a5d1" />
 <img width="1108" height="1688" alt="IMG_20260516_011350" src="https://github.com/user-attachments/assets/6914d4ab-daa6-432a-983d-6abac15a1cac" />
@@ -38,7 +38,7 @@ The card combines an SVG energy-flow canvas (sun arc, animated flow paths, inver
 ### Method 1 — HACS (Recommended)
 
 1. In HACS, go to **Frontend → ⋮ → Custom repositories**
-2. Paste: `https://github.com/thekhan1122/rdp-flow-card` (without `.git`)
+2. Paste: `https://github.com/RienduPre/rdp-flow-card` (without `.git`)
 3. Category: **Lovelace**
 4. Install the card – the resource is added automatically.
 5. Click the **+ Explore & Download Repositories** button.
@@ -385,4 +385,4 @@ When reporting an issue, include:
 
 ---
 
-*Khan Automation · rdp-flow-card · Last updated: v1.1.1*
+*rdp-flow-card · Last updated: v1.1.1*
