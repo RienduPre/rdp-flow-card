@@ -1063,8 +1063,8 @@ class RdpFlowCard extends HTMLElement {
     const pvTxt = (pvTotal >= 1000 ? (pvTotal / 1000).toFixed(2) + ' kW' : pvTotal.toFixed(0) + ' W') + ' ⚡';
     const pvLabelRect = getEl('arcPvLabelRect');
     const pvLabelText = getEl('arcPvLabelText');
-    if (pvLabelRect) { pvLabelRect.setAttribute('x', sun.t < 0.5 ? Math.max(4, sun.bx - 108) : Math.min(sun.bx + 14, 420)); pvLabelRect.setAttribute('y', Math.max(2, sun.by - 28)); }
-    if (pvLabelText) { pvLabelText.setAttribute('x', sun.t < 0.5 ? Math.max(52, sun.bx - 60) : Math.min(sun.bx + 62, 468)); pvLabelText.setAttribute('y', Math.max(19, sun.by - 11)); pvLabelText.textContent = pvTxt; }
+    if (pvLabelRect) { pvLabelRect.setAttribute('x', sun.t < 0.5 ? Math.max(4, sun.bx - 108) : Math.min(sun.bx + 14, 420)); pvLabelRect.setAttribute('y', Math.max(2, sun.by - 28)); pvLabelRect.setAttribute('fill', clr('rgba(255,200,50,.22)', 'rgba(180,130,0,.18)')); pvLabelRect.setAttribute('stroke', clr('rgba(255,210,60,.5)', 'rgba(120,80,0,.55)')); }
+    if (pvLabelText) { pvLabelText.setAttribute('x', sun.t < 0.5 ? Math.max(52, sun.bx - 60) : Math.min(sun.bx + 62, 468)); pvLabelText.setAttribute('y', Math.max(19, sun.by - 11)); pvLabelText.textContent = pvTxt; pvLabelText.setAttribute('fill', clr('rgba(255,235,110,.98)', '#5a3e00')); }
     setText('arcRiseLabel', sun.rise);
     setText('arcSetLabel', sun.set);
 
@@ -1136,9 +1136,9 @@ class RdpFlowCard extends HTMLElement {
       setText('battVoltageFlow1', battVolt1.toFixed(1) + ' V'); setText('battVoltageFlow2', battVolt2.toFixed(1) + ' V');
       // Current & power placed outside battery group
       setText('battPwrFlow1', Math.abs(battPwr1).toFixed(0) + ' W');
-      setText('battCurrFlow1', battCurr1.toFixed(1) + ' A');
+      setText('battCurrFlow1', battCurr1.toFixed(1) + ' A'); setAttr('battCurrFlow1', 'fill', clr('#fff', '#1f2328'));
       setText('battPwrFlow2', Math.abs(battPwr2).toFixed(0) + ' W');
-      setText('battCurrFlow2', battCurr2.toFixed(1) + ' A');
+      setText('battCurrFlow2', battCurr2.toFixed(1) + ' A'); setAttr('battCurrFlow2', 'fill', clr('#fff', '#1f2328'));
       const bolt1 = getEl('battBoltGroup1'), bolt2 = getEl('battBoltGroup2');
       if (bolt1) bolt1.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
       if (bolt2) bolt2.setAttribute('opacity', (battPwr2 > 10 && Math.abs(battPwr2) >= 10) ? '1' : '0');
@@ -1149,7 +1149,7 @@ class RdpFlowCard extends HTMLElement {
       setText('fcBattVal', battSoc1 + '%'); setAttr('fcBattVal', 'fill', fill.textColor);
       setText('battVoltageFlow', battVolt1.toFixed(1) + ' V');
       setText('battPwrFlow', absPwr1.toFixed(0) + ' W');
-      setText('battCurrFlow', battCurr1.toFixed(1) + ' A');
+      setText('battCurrFlow', battCurr1.toFixed(1) + ' A'); setAttr('battCurrFlow', 'fill', clr('#fff', '#1f2328'));
       const bolt = getEl('battBoltGroup'); if (bolt) bolt.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
     }
 
