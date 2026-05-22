@@ -963,10 +963,6 @@ class RdpFlowCard extends HTMLElement {
         <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase">PV</span><div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:10px" id="pvBlocks"></div></div>
         <div style="flex:1;display:flex;align-items:center;gap:4px"><span style="font-size:.42rem;color:#8b949e;letter-spacing:1px;text-transform:uppercase">Pwr</span><div style="flex:1;background:#21262d;border-radius:20px;height:9px;overflow:hidden;position:relative"><div id="pwrBar" style="position:absolute;inset:0;right:auto;width:0%;border-radius:20px;background:#3fb950;transition:width .4s,background .4s"></div></div></div>
       </div>
-      <div class="dv"></div>
-      <div style="margin-top:5px">
-        <div class="st"><div class="l">${this.config.label_total_pv_gen || 'TOTAL PV GEN.'}</div><div class="v" id="bTotalPvGen">-- kWh</div></div>
-      </div>
     </div>`;
   }
 
@@ -1125,21 +1121,6 @@ class RdpFlowCard extends HTMLElement {
       const bolt = getEl('battBoltGroup'); if (bolt) bolt.setAttribute('opacity', (battPwr1 > 10 && absPwr1 >= 10) ? '1' : '0');
     }
 
-    // Total PV Generation stat tile
-    const _totalPvGenEl = getEl('bTotalPvGen');
-    if (_totalPvGenEl) {
-      const totalPvGenEntity = this.config.total_pv_gen_entity || 'sensor.goodwe_total_pv_generation';
-      const totalPvGenState = this._hass && this._hass.states[totalPvGenEntity];
-      if (totalPvGenState) {
-        const val = parseFloat(totalPvGenState.state);
-        const unit = totalPvGenState.attributes.unit_of_measurement || 'kWh';
-        _totalPvGenEl.textContent = isNaN(val) ? '--' : val.toFixed(1) + ' ' + unit;
-        _totalPvGenEl.style.color = '#f4d03f';
-      } else {
-        _totalPvGenEl.textContent = '-- kWh';
-        _totalPvGenEl.style.color = '#8b949e';
-      }
-    }
     const pwrBar = getEl('pwrBar');
     if (pwrBar) {
       pwrBar.style.width = Math.min(absPwr1 / invMax * 100, 100).toFixed(1) + '%';
