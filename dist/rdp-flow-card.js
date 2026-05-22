@@ -470,12 +470,15 @@ class RdpFlowCardEditor extends HTMLElement {
 
     shell.appendChild(makeSection('solar', '☀️', 'Solar', [
       picker('pv1_power', 'PV1 Power'),
-      picker('pv2_power', 'PV2 Power'),
+      textField('pv1_name', 'PV1 Label', 'e.g. Roof'),
     ]));
 
-    shell.appendChild(makeSection('solar_extra', '☀️', 'Extra PV Strings (PV2 / PV3 / PV4)', [
+    shell.appendChild(makeSection('solar_extra', '☀️', 'Extra PV Strings (PV2 / PV3)', [
       picker('pv2_power', 'PV2 Power', true),
+      textField('pv2_name', 'PV2 Label', 'e.g. Garage'),
+      divider(),
       picker('pv3_power', 'PV3 Power', true),
+      textField('pv3_name', 'PV3 Label', 'e.g. Carport'),
     ], { toggleKey: '_show_pv_extra', toggleOn: showPVExtra, hidden: !showPVExtra }));
 
     shell.appendChild(makeSection('solar_extras', '☀️', 'Solar Extras', [
@@ -570,9 +573,11 @@ class RdpFlowCard extends HTMLElement {
   static getStubConfig() {
     return {
       pv1_power: 'sensor.goodwe_pv1_power',
+      pv1_name: 'PV1',
       pv2_power: 'sensor.goodwe_pv2_power',
+      pv2_name: 'PV2',
       pv3_power: '',
-      pv4_power: '',
+      pv3_name: 'PV3',
       pv_total_power: 'sensor.goodwe_pv_power',
       grid_active_power: 'sensor.goodwe_active_power',
       grid_import_energy: 'sensor.goodwe_today_energy_import',
@@ -1186,9 +1191,14 @@ class RdpFlowCard extends HTMLElement {
     setText('fcLoadVal', load >= 1000 ? (load / 1000).toFixed(2) + ' kW' : load.toFixed(0) + ' W');
     setAttr('fcLoadVal', 'fill', load > 10 ? loadFlowColor : '#8b949e');
 
+    setText('pv1label', this.config.pv1_name || 'PV1');
     setText('pv1FlowVal', pv1 >= 1000 ? (pv1 / 1000).toFixed(2) + ' kW' : pv1.toFixed(0) + ' W');
-    if (this.config._show_pv_extra) setText('pv2FlowVal', pv2 >= 1000 ? (pv2 / 1000).toFixed(2) + ' kW' : pv2.toFixed(0) + ' W');
-    if (this.config._show_pv_extra) setText('pv3FlowVal', pv3 >= 1000 ? (pv3 / 1000).toFixed(2) + ' kW' : pv3.toFixed(0) + ' W');
+    if (this.config._show_pv_extra) {
+      setText('pv2label', this.config.pv2_name || 'PV2');
+      setText('pv2FlowVal', pv2 >= 1000 ? (pv2 / 1000).toFixed(2) + ' kW' : pv2.toFixed(0) + ' W');
+      setText('pv3label', this.config.pv3_name || 'PV3');
+      setText('pv3FlowVal', pv3 >= 1000 ? (pv3 / 1000).toFixed(2) + ' kW' : pv3.toFixed(0) + ' W');
+    }
 
     // ── Label entity overrides for stat tiles ──
     // Per-row: override active only when global gate ON AND label text ≠ its default
