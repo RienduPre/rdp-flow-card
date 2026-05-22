@@ -226,11 +226,6 @@ Include: HA version · rdp-flow-card version · browser console errors · releva
 - Removed: TEMP, BMS TEMP, ENDURANCE, MIN CELL, MAX CELL, BATT DIS stat tiles
 - Removed: inverter summary panel (Today PV, Chg/Dis, Remaining, Today Load)
 
-### v1.0.0
-- Initial release as rdp-flow-card, forked and customised from k-flow-card
-- Renamed all identifiers and element names to `rdp-flow-card`
-- Icons embedded as base64 (no dependency on `/local/community/` path)
-- HACS metadata added
 
 ---
 
