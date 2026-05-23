@@ -66,7 +66,7 @@ class RdpFlowCardEditor extends HTMLElement {
     this._config = { ...this._config, [key]: value };
     this._fireChanged();
     if (key === '_show_battery' || key === '_show_battery2' || key === '_show_pv_extra' ||
-        key === '_show_ev'      || key === '_show_ev2'     || key === '_show_limits'   || key === '_labels_custom_entities' ||
+        key === '_show_ev'      || key === '_show_ev2'     || key === '_show_hp'      || key === '_show_hp2'    || key === '_show_limits'   || key === '_labels_custom_entities' ||
         key === 'label_cell_temp_minmax' || key === 'label_bms_temp'   ||
         key === 'label_min_cell'         || key === 'label_max_cell'   ||
         key === 'label_batt_dis'         || key === 'label_total_pv_gen')
@@ -82,6 +82,8 @@ class RdpFlowCardEditor extends HTMLElement {
     const showPVExtra = !!(cfg._show_pv_extra);
     const showEV = !!(cfg._show_ev);
     const showEV2 = !!(cfg._show_ev2);
+    const showHP  = !!(cfg._show_hp);
+    const showHP2 = !!(cfg._show_hp2);
     const showLimits = !!(cfg._show_limits);
 
     const style = `
@@ -555,6 +557,18 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('charger2_soc',            'Car 2 Battery SOC'),
     ], { toggleKey: '_show_ev2', toggleOn: showEV2, hidden: !showEV2 }));
 
+    shell.appendChild(makeSection('hp1', '🌡️', 'Warmtepomp 1', [
+      picker('hp1_state',           'HP 1 State (on/heating/off)'),
+      picker('hp1_power',           'HP 1 Power'),
+      textField('hp1_name',         'HP 1 Label', 'WP 1'),
+    ], { toggleKey: '_show_hp', toggleOn: showHP, hidden: !showHP }));
+
+    shell.appendChild(makeSection('hp2', '🌡️', 'Warmtepomp 2', [
+      picker('hp2_state',           'HP 2 State (on/heating/off)'),
+      picker('hp2_power',           'HP 2 Power'),
+      textField('hp2_name',         'HP 2 Label', 'WP 2'),
+    ], { toggleKey: '_show_hp2', toggleOn: showHP2, hidden: !showHP2 }));
+
     this.innerHTML = '';
     this.appendChild(shell);
     this._rendered = true; // Fix #2: mark rendered so hass setter stops triggering full DOM rebuilds
@@ -646,6 +660,14 @@ class RdpFlowCard extends HTMLElement {
       _show_ev: false,
       _show_ev2: false,
       charger2_state: '',
+      _show_hp: false,
+      hp1_state: '',
+      hp1_power: '',
+      hp1_name: 'WP 1',
+      _show_hp2: false,
+      hp2_state: '',
+      hp2_power: '',
+      hp2_name: 'WP 2',
       charger2_power: '',
       charger2_current: '',
       charger2_soc: '',
@@ -817,11 +839,13 @@ class RdpFlowCard extends HTMLElement {
     const showBatt1 = !!(this.config._show_battery !== false);
     const ev   = !!(this.config._show_ev);
     const ev2  = !!(this.config._show_ev2);
+    const hp   = !!(this.config._show_hp);
+    const hp2  = !!(this.config._show_hp2);
     const showPvExtra = !!(this.config._show_pv_extra);
     // iconPath removed - icons embedded as base64    // icons served from HACS community folder
 
-    const pv2txt = showPvExtra ? `<text id="pv2label" x="68" y="392" font-size="9" fill="#8b949e" letter-spacing="1">PV2</text><text id="pv2FlowVal" x="68" y="406" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>` : '';
-    const pv3txt = showPvExtra ? `<text id="pv3label" x="68" y="424" font-size="9" fill="#8b949e" letter-spacing="1">PV3</text><text id="pv3FlowVal" x="68" y="438" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>` : '';
+    const pv2txt = showPvExtra ? `<text id="pv2label" x="68" y="292" font-size="9" fill="#8b949e" letter-spacing="1">PV2</text><text id="pv2FlowVal" x="68" y="306" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>` : '';
+    const pv3txt = showPvExtra ? `<text id="pv3label" x="68" y="324" font-size="9" fill="#8b949e" letter-spacing="1">PV3</text><text id="pv3FlowVal" x="68" y="338" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>` : '';
     const pv4txt = '';
 
     // EV placement inline with home and grid
@@ -846,6 +870,62 @@ class RdpFlowCard extends HTMLElement {
       <text id="ev2PowerVal" x="389" y="${evY2 + 14}" text-anchor="middle" font-size="11" font-weight="700" class="ev-val" fill="#29c4f6">-- W</text>
       <text id="ev2CurrentVal" x="389" y="${evY2 + 25}" text-anchor="middle" font-size="9" class="svg-dim" fill="#8b949e">-- A</text>
       <text id="ev2SocVal" x="518" y="${evY2 + 42}" text-anchor="end" font-size="10" font-weight="700" fill="#4ade80">-- %</text>
+    </g>` : '';
+
+
+    const hp1txt = hp ? `<g id="hp1Group">
+      <path id="flowHomeHP1" d="M 179,397 H 75" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" opacity="0" style="display:none">
+        <animate attributeName="stroke-dashoffset" from="-14" to="0" dur="1.2s" repeatCount="indefinite"/>
+      </path>
+      <g id="hp1IconG" transform="translate(5,369)" style="opacity:0.3">
+        <ellipse cx="35" cy="64" rx="28" ry="3.5" fill="rgba(0,0,0,0.22)"/>
+      <rect x="0" y="0" width="70" height="60" rx="6" fill="url(#hpBodyG)" stroke="#2d5a72" stroke-width="1.5"/>
+      <rect x="0" y="0" width="70" height="9" rx="6" fill="#2d5a72"/>
+      <rect x="0" y="5" width="70" height="4" fill="#2d5a72"/>
+      <circle cx="50" cy="36" r="18" fill="#0e2030" stroke="#1a4060" stroke-width="1"/>
+      <path d="M50,20 Q60,24 62,35 Q56,28 50,36 Z" fill="#1a4060" opacity="0.9"/>
+      <path d="M66,36 Q62,47 51,48 Q58,41 50,36 Z" fill="#224870" opacity="0.9"/>
+      <path d="M50,52 Q40,48 38,37 Q44,44 50,36 Z" fill="#1a4060" opacity="0.9"/>
+      <path d="M34,36 Q38,25 49,24 Q43,31 50,36 Z" fill="#224870" opacity="0.9"/>
+      <circle cx="50" cy="36" r="4.5" fill="#2a6080"/>
+      <line x1="5" y1="16" x2="27" y2="16" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="22" x2="27" y2="22" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="28" x2="27" y2="28" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="34" x2="27" y2="34" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="40" x2="27" y2="40" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="46" x2="27" y2="46" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="10" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
+      <rect x="44" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
+      </g>
+      <text id="hp1NameLabel" x="127" y="372" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 1</text>
+      <text id="hp1PowerVal" x="127" y="385" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
+    </g>` : '';
+    const hp2txt = hp2 ? `<g id="hp2Group">
+      <path id="flowHomeHP2" d="M 179,410 H 127 V 480 H 75" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" opacity="0" style="display:none">
+        <animate attributeName="stroke-dashoffset" from="-14" to="0" dur="1.2s" repeatCount="indefinite"/>
+      </path>
+      <g id="hp2IconG" transform="translate(5,452)" style="opacity:0.3">
+        <ellipse cx="35" cy="64" rx="28" ry="3.5" fill="rgba(0,0,0,0.22)"/>
+      <rect x="0" y="0" width="70" height="60" rx="6" fill="url(#hpBodyG)" stroke="#2d5a72" stroke-width="1.5"/>
+      <rect x="0" y="0" width="70" height="9" rx="6" fill="#2d5a72"/>
+      <rect x="0" y="5" width="70" height="4" fill="#2d5a72"/>
+      <circle cx="50" cy="36" r="18" fill="#0e2030" stroke="#1a4060" stroke-width="1"/>
+      <path d="M50,20 Q60,24 62,35 Q56,28 50,36 Z" fill="#1a4060" opacity="0.9"/>
+      <path d="M66,36 Q62,47 51,48 Q58,41 50,36 Z" fill="#224870" opacity="0.9"/>
+      <path d="M50,52 Q40,48 38,37 Q44,44 50,36 Z" fill="#1a4060" opacity="0.9"/>
+      <path d="M34,36 Q38,25 49,24 Q43,31 50,36 Z" fill="#224870" opacity="0.9"/>
+      <circle cx="50" cy="36" r="4.5" fill="#2a6080"/>
+      <line x1="5" y1="16" x2="27" y2="16" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="22" x2="27" y2="22" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="28" x2="27" y2="28" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="34" x2="27" y2="34" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="40" x2="27" y2="40" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="5" y1="46" x2="27" y2="46" stroke="#5a8898" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="10" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
+      <rect x="44" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
+      </g>
+      <text id="hp2NameLabel" x="101" y="455" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 2</text>
+      <text id="hp2PowerVal" x="101" y="468" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
     </g>` : '';
 
     // Battery current/power placed OUTSIDE the transformed group, above/below the flow bar (center y=175)
@@ -943,7 +1023,7 @@ class RdpFlowCard extends HTMLElement {
         <linearGradient id="pvFrameG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7a9aaa"/><stop offset="40%" stop-color="#c8dae0"/><stop offset="100%" stop-color="#3a5868"/></linearGradient>
         <linearGradient id="pvGlassG" x1="10%" y1="0%" x2="90%" y2="100%"><stop offset="0%" stop-color="#0e2458"/><stop offset="100%" stop-color="#060e28"/></linearGradient>
         <linearGradient id="pvCellG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a50d8"/><stop offset="100%" stop-color="#0c2880"/></linearGradient>
-        <linearGradient id="pvShineG" x1="0%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="60%" stop-color="rgba(255,255,255,0.04)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></linearGradient>
+        <linearGradient id="hpBodyG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a4a5e"/><stop offset="100%" stop-color="#0e2030"/></linearGradient><linearGradient id="pvShineG" x1="0%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="60%" stop-color="rgba(255,255,255,0.04)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></linearGradient>
         ${dual?`<clipPath id="battBodyClipLeft"><rect x="53" y="145" width="30" height="118" rx="6"/></clipPath><clipPath id="battBodyClipRight"><rect x="85" y="145" width="30" height="118" rx="6"/></clipPath>`:`<clipPath id="battBodyClip"><rect x="53" y="145" width="62" height="118" rx="8"/></clipPath>`}
         <filter id="battGlowRed"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="battGlowOrange"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -1004,7 +1084,7 @@ class RdpFlowCard extends HTMLElement {
       <text x="260" y="248" text-anchor="middle" font-size="14" fill="#f4a93b" opacity="0.85">▼</text>
 
       <!-- Solar panel icon next to PV1/PV2 -->
-      <g transform="translate(4, 350)">
+      <g transform="translate(4, 250)">
         <ellipse cx="28" cy="70" rx="22" ry="3" fill="rgba(0,0,0,0.22)"/>
         <rect x="24" y="56" width="6" height="15" rx="1.5" fill="#253545"/>
         <rect x="13" y="67" width="28" height="4" rx="2" fill="#1a2530"/>
@@ -1025,8 +1105,8 @@ class RdpFlowCard extends HTMLElement {
         <rect x="3" y="3" width="50" height="48" rx="2" fill="url(#pvShineG)"/>
         <circle cx="9" cy="9" r="4" fill="rgba(255,245,160,0.22)"/>
       </g>
-      <text id="pv1label" x="68" y="360" font-size="9" fill="#8b949e" letter-spacing="1">PV1</text>
-      <text id="pv1FlowVal" x="68" y="374" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>
+      <text id="pv1label" x="68" y="260" font-size="9" fill="#8b949e" letter-spacing="1">PV1</text>
+      <text id="pv1FlowVal" x="68" y="274" font-size="12" font-weight="700" class="pv-val" fill="#ffe83c">-- W</text>
       ${pv2txt}
       ${pv3txt}
       ${pv4txt}
@@ -1035,6 +1115,8 @@ class RdpFlowCard extends HTMLElement {
       <text id="fcLoadVal" x="272" y="348" text-anchor="start" font-size="13" font-weight="700" fill="#F7F6D3">-- W</text>
       ${evtxt}
       ${ev2txt}
+      ${hp1txt}
+      ${hp2txt}
       </svg></div>`+
 
       `<div style="display:flex;gap:8px;align-items:center;margin-top:10px">
@@ -1097,6 +1179,10 @@ class RdpFlowCard extends HTMLElement {
     const charger2Current = _n(this._val(this.config.charger2_current));
     const charger2Soc = _n(this._val(this.config.charger2_soc));
     const charger2StateStr = this._strVal(this.config.charger2_state);
+    const hp1Power = _n(this._val(this.config.hp1_power, true));
+    const hp1StateStr = this._strVal(this.config.hp1_state);
+    const hp2Power = _n(this._val(this.config.hp2_power, true));
+    const hp2StateStr = this._strVal(this.config.hp2_state);
     const chargerBattCapWh = Number(this.config.charger_battery_capacity_wh) || 0;
     const chargerStateStr = this._strVal(this.config.charger_state);
 
@@ -1361,6 +1447,54 @@ class RdpFlowCard extends HTMLElement {
           setText('ev2CurrentVal', '-- A');
           setText('ev2SocVal', '-- %');
         }
+      }
+    }
+
+    // HP1
+    const hp1Group = getEl('hp1Group');
+    if (hp1Group) {
+      if (!this.config._show_hp) {
+        hp1Group.style.display = 'none';
+      } else {
+        hp1Group.style.display = '';
+        const isActiveHP1 = hp1StateStr === 'on' || hp1StateStr === 'heating' || hp1StateStr === 'heat' || hp1StateStr === 'cooling' || hp1StateStr === 'cool';
+        const hp1Flow = getEl('flowHomeHP1');
+        const hp1Icon = getEl('hp1IconG');
+        if (hp1Flow) {
+          if (isActiveHP1) {
+            hp1Flow.setAttribute('opacity', '0.9'); hp1Flow.style.display = '';
+            if (hp1Icon) { hp1Icon.style.opacity = '1'; hp1Icon.setAttribute('filter', 'url(#iconGlowOrange)'); }
+          } else {
+            hp1Flow.setAttribute('opacity', '0'); hp1Flow.style.display = 'none';
+            if (hp1Icon) { hp1Icon.removeAttribute('filter'); hp1Icon.style.opacity = '0.3'; }
+          }
+        }
+        setText('hp1NameLabel', this.config.hp1_name || 'WP 1');
+        setText('hp1PowerVal', isActiveHP1 ? hp1Power.toFixed(0) + ' W' : '-- W');
+      }
+    }
+
+    // HP2
+    const hp2Group = getEl('hp2Group');
+    if (hp2Group) {
+      if (!this.config._show_hp2) {
+        hp2Group.style.display = 'none';
+      } else {
+        hp2Group.style.display = '';
+        const isActiveHP2 = hp2StateStr === 'on' || hp2StateStr === 'heating' || hp2StateStr === 'heat' || hp2StateStr === 'cooling' || hp2StateStr === 'cool';
+        const hp2Flow = getEl('flowHomeHP2');
+        const hp2Icon = getEl('hp2IconG');
+        if (hp2Flow) {
+          if (isActiveHP2) {
+            hp2Flow.setAttribute('opacity', '0.9'); hp2Flow.style.display = '';
+            if (hp2Icon) { hp2Icon.style.opacity = '1'; hp2Icon.setAttribute('filter', 'url(#iconGlowOrange)'); }
+          } else {
+            hp2Flow.setAttribute('opacity', '0'); hp2Flow.style.display = 'none';
+            if (hp2Icon) { hp2Icon.removeAttribute('filter'); hp2Icon.style.opacity = '0.3'; }
+          }
+        }
+        setText('hp2NameLabel', this.config.hp2_name || 'WP 2');
+        setText('hp2PowerVal', isActiveHP2 ? hp2Power.toFixed(0) + ' W' : '-- W');
       }
     }
   }
