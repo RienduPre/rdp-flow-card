@@ -378,33 +378,6 @@ class RdpFlowCardEditor extends HTMLElement {
       textField('inverter_name', 'Inverter Name', 'e.g. My Inverter'),
     ]));
 
-    // ── Labels: global gate + per-row activation ──
-    // Gate: section chip toggles _labels_custom_entities (body hidden when off).
-        // Helper: entity picker that can be visually disabled
-    const pickerMaybeDisabled = (key, label, disabled = false, optional = false) => {
-      const wrap = picker(key, label, optional);
-      if (disabled) {
-        wrap.style.position = 'relative';
-        const veil = document.createElement('div');
-        veil.style.cssText = [
-          'position:absolute', 'inset:0', 'border-radius:6px',
-          'background:var(--secondary-background-color,rgba(0,0,0,.06))',
-          'opacity:.55', 'pointer-events:all', 'cursor:not-allowed',
-          'z-index:10',
-        ].join(';');
-        const note = document.createElement('div');
-        note.style.cssText = [
-          'position:absolute', 'inset:0', 'display:flex', 'align-items:center',
-          'justify-content:center', 'font-size:.68rem', 'font-weight:600',
-          'color:var(--secondary-text-color)', 'letter-spacing:.3px',
-          'pointer-events:none', 'z-index:11',
-        ].join(';');
-        note.textContent = '⛔ Overridden by Labels section';
-        wrap.appendChild(veil);
-        wrap.appendChild(note);
-      }
-      return wrap;
-    };
 
     shell.appendChild(makeSection('solar', '☀️', 'Solar', [
       picker('pv1_power', 'PV1 Power'),
@@ -429,7 +402,7 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('consump',         'House Consumption'),
       divider(),
       textField('label_total_pv_gen', 'Total PV Generation label', 'TOTAL PV GEN.'),
-      pickerMaybeDisabled('total_pv_gen_entity', 'Total PV Generation', totalPvGenActive),
+      picker('total_pv_gen_entity', 'Total PV Generation'),
     ]));
 
     shell.appendChild(makeSection('grid', '🔌', 'Grid', [
@@ -448,11 +421,11 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('battery_power',    'Battery Power'),
       picker('battery_current',  'Battery Current'),
       picker('battery_voltage',  'Battery Voltage'),
-      pickerMaybeDisabled('battery_temp1',    'Temp 1',             cellTempActive),
-      pickerMaybeDisabled('battery_temp2',    'Temp 2',             cellTempActive),
-      pickerMaybeDisabled('battery_min_cell', 'Min Cell Voltage',   minCellActive),
-      pickerMaybeDisabled('battery_max_cell', 'Max Cell Voltage',   maxCellActive),
-      pickerMaybeDisabled('batt_dis',         'Discharge Today',    battDisActive),
+      picker('battery_temp1',    'Temp 1'),
+      picker('battery_temp2',    'Temp 2'),
+      picker('battery_min_cell', 'Min Cell Voltage'),
+      picker('battery_max_cell', 'Max Cell Voltage'),
+      picker('batt_dis',         'Discharge Today'),
       divider(),
       picker('goodwe_battery_soc',  'Fallback SOC',     true),
       picker('goodwe_battery_curr', 'Fallback Current', true),
