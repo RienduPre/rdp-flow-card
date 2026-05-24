@@ -1422,6 +1422,6 @@ window.customCards.push({
   name: 'RdP-Flow',
   description: 'Real-time solar/battery/grid energy flow card with animated power paths, EV charger and heat pump support.',
   preview: true,
-  version: '1.0.1',
+  version: '1.0.2',
 });
 customElements.define('rdp-flow-card', RdpFlowCard);
