@@ -897,11 +897,11 @@ class RdpFlowCard extends HTMLElement {
       <rect x="10" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       <rect x="44" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       </g>
-      <text id="hp1NameLabel" x="127" y="372" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 1</text>
+      <text id="hp1NameLabel" x="40" y="440" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 1</text>
       <text id="hp1PowerVal" x="127" y="385" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
     </g>` : '';
     const hp2txt = hp2 ? `<g id="hp2Group">
-      <path id="flowHomeHP2" d="M 179,410 H 127 V 480 H 75" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" opacity="0" style="display:none">
+      <path id="flowHomeHP2" d="M 179,410 H 141 V 480 H 75" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" opacity="0" style="display:none">
         <animate attributeName="stroke-dashoffset" from="-14" to="0" dur="1.2s" repeatCount="indefinite"/>
       </path>
       <g id="hp2IconG" transform="translate(5,452)" style="opacity:0.3">
@@ -924,8 +924,8 @@ class RdpFlowCard extends HTMLElement {
       <rect x="10" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       <rect x="44" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       </g>
-      <text id="hp2NameLabel" x="101" y="455" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 2</text>
-      <text id="hp2PowerVal" x="101" y="468" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
+      <text id="hp2NameLabel" x="40" y="524" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 2</text>
+      <text id="hp2PowerVal" x="108" y="467" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
     </g>` : '';
 
     // Battery current/power placed OUTSIDE the transformed group, above/below the flow bar (center y=175)
