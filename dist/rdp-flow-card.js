@@ -605,6 +605,7 @@ class RdpFlowCard extends HTMLElement {
     this._buildStaticSVG();
     const isDark = this._hass?.themes?.darkMode !== false;
     this._applyTheme(isDark);
+    if (this._hass) this._updateDynamic();
   }
 
   set hass(hass) {
@@ -1071,7 +1072,10 @@ class RdpFlowCard extends HTMLElement {
     const totalPvSensor = this._val(this.config.pv_total_power, true);
     const pvTotal = (totalPvSensor !== null && !isNaN(totalPvSensor) && totalPvSensor > 0) ? totalPvSensor : pv1 + pv2 + pv3 + pv4;
     const _gridPrimary = this._val(this.config.grid_active_power, true);
-    let gridActive = _gridPrimary !== null ? _gridPrimary : _nullOr0(this._val(this.config.grid_power_alt, true));
+    const _gridAlt = this._val(this.config.grid_power_alt, true);
+    const _gridRaw = _gridPrimary !== null ? _gridPrimary : _gridAlt;
+    const gridAvailable = _gridRaw !== null;
+    let gridActive = gridAvailable ? _gridRaw : 0;
     if (this.config.invert_grid_power) gridActive = -gridActive;
     const gridImport = _n(this._val(this.config.grid_import_energy));
     const gridExport = _n(this._val(this.config.grid_export_energy));
@@ -1144,8 +1148,8 @@ class RdpFlowCard extends HTMLElement {
     };
 
     const absPwr1 = Math.abs(battPwr1);
-    const isCharging1 = battPwr1 > 10;
-    const showBattIn = battPwr1 > 10;
+    const isCharging1 = battPwr1 > 10 && battSoc1 < 100;
+    const showBattIn = battPwr1 > 10 && battSoc1 < 100;
     const showBattOut = battPwr1 < -10;
     let battLineColor = '#8b949e', battDur = '4.0s', battShowIn = false, battShowOut = false;
     if (absPwr1 < 10) { battShowIn = false; battShowOut = false; }
@@ -1220,9 +1224,8 @@ class RdpFlowCard extends HTMLElement {
     setText('invLoadPctFlow', invLoadPct + '%'); setAttr('invLoadPctFlow', 'fill', Number(invLoadPct) <= 50 ? clr('#3fb950', '#186f2c') : clr('#f39c4b', '#c07320'));
 
     const gridDir = gridActive > 10 ? '▼ ' : gridActive < -10 ? '▲ ' : '';
-    // Fix #7: grid power now auto-switches to kW like load/PV (was always showing W)
     const absGrid2 = Math.abs(gridActive);
-    setText('fcGridVal', gridDir + (absGrid2 >= 1000 ? (absGrid2 / 1000).toFixed(2) + ' kW' : absGrid2.toFixed(0) + ' W'));
+    setText('fcGridVal', !gridAvailable ? '-- W' : gridDir + (absGrid2 >= 1000 ? (absGrid2 / 1000).toFixed(2) + ' kW' : absGrid2.toFixed(0) + ' W'));
     setAttr('fcGridVal', 'fill', gridActive > 10 ? clr('#FF2929', '#b30000') : gridActive < -10 ? clr('#2ecc71', '#186f2c') : clr('#8b949e', '#57606a'));
 
     setText('fcLoadVal', load >= 1000 ? (load / 1000).toFixed(2) + ' kW' : load.toFixed(0) + ' W');
