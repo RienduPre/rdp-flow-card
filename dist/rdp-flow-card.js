@@ -560,13 +560,13 @@ class RdpFlowCardEditor extends HTMLElement {
     shell.appendChild(makeSection('hp1', '🌡️', 'Warmtepomp 1', [
       picker('hp1_state',           'HP 1 State (on/heating/off)'),
       picker('hp1_power',           'HP 1 Power'),
-      textField('hp1_name',         'HP 1 Label', 'WP 1'),
+      textField('hp1_name',         'HP 1 Label', ''),
     ], { toggleKey: '_show_hp', toggleOn: showHP, hidden: !showHP }));
 
     shell.appendChild(makeSection('hp2', '🌡️', 'Warmtepomp 2', [
       picker('hp2_state',           'HP 2 State (on/heating/off)'),
       picker('hp2_power',           'HP 2 Power'),
-      textField('hp2_name',         'HP 2 Label', 'WP 2'),
+      textField('hp2_name',         'HP 2 Label', ''),
     ], { toggleKey: '_show_hp2', toggleOn: showHP2, hidden: !showHP2 }));
 
     this.innerHTML = '';
@@ -663,11 +663,11 @@ class RdpFlowCard extends HTMLElement {
       _show_hp: false,
       hp1_state: '',
       hp1_power: '',
-      hp1_name: 'WP 1',
+      hp1_name: '',
       _show_hp2: false,
       hp2_state: '',
       hp2_power: '',
-      hp2_name: 'WP 2',
+      hp2_name: '',
       charger2_power: '',
       charger2_current: '',
       charger2_soc: '',
@@ -897,7 +897,7 @@ class RdpFlowCard extends HTMLElement {
       <rect x="10" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       <rect x="44" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       </g>
-      <text id="hp1NameLabel" x="40" y="440" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 1</text>
+      <text id="hp1NameLabel" x="40" y="440" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
       <text id="hp1PowerVal" x="127" y="385" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
     </g>` : '';
     const hp2txt = hp2 ? `<g id="hp2Group">
@@ -924,7 +924,7 @@ class RdpFlowCard extends HTMLElement {
       <rect x="10" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       <rect x="44" y="56" width="7" height="7" rx="2" fill="#2d5a72"/>
       </g>
-      <text id="hp2NameLabel" x="40" y="524" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1">WP 2</text>
+      <text id="hp2NameLabel" x="40" y="524" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
       <text id="hp2PowerVal" x="108" y="467" text-anchor="middle" font-size="12" font-weight="700" fill="#f97316">-- W</text>
     </g>` : '';
 
@@ -1469,7 +1469,7 @@ class RdpFlowCard extends HTMLElement {
             if (hp1Icon) { hp1Icon.removeAttribute('filter'); hp1Icon.style.opacity = '0.3'; }
           }
         }
-        setText('hp1NameLabel', this.config.hp1_name || 'WP 1');
+        setText('hp1NameLabel', this.config.hp1_name || '');
         setText('hp1PowerVal', isActiveHP1 ? hp1Power.toFixed(0) + ' W' : '-- W');
       }
     }
@@ -1493,7 +1493,7 @@ class RdpFlowCard extends HTMLElement {
             if (hp2Icon) { hp2Icon.removeAttribute('filter'); hp2Icon.style.opacity = '0.3'; }
           }
         }
-        setText('hp2NameLabel', this.config.hp2_name || 'WP 2');
+        setText('hp2NameLabel', this.config.hp2_name || '');
         setText('hp2PowerVal', isActiveHP2 ? hp2Power.toFixed(0) + ' W' : '-- W');
       }
     }
