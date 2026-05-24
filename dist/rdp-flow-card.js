@@ -66,10 +66,7 @@ class RdpFlowCardEditor extends HTMLElement {
     this._config = { ...this._config, [key]: value };
     this._fireChanged();
     if (key === '_show_battery' || key === '_show_battery2' || key === '_show_pv_extra' ||
-        key === '_show_ev'      || key === '_show_ev2'     || key === '_show_hp'      || key === '_show_hp2'    || key === '_show_limits'   || key === '_labels_custom_entities' ||
-        key === 'label_cell_temp_minmax' || key === 'label_bms_temp'   ||
-        key === 'label_min_cell'         || key === 'label_max_cell'   ||
-        key === 'label_batt_dis'         || key === 'label_total_pv_gen')
+        key === '_show_ev'      || key === '_show_ev2'     || key === '_show_hp'      || key === '_show_hp2'    || key === '_show_limits'   || key === 'label_total_pv_gen')
       this._render();
   }
 
@@ -383,10 +380,7 @@ class RdpFlowCardEditor extends HTMLElement {
 
     // ── Labels: global gate + per-row activation ──
     // Gate: section chip toggles _labels_custom_entities (body hidden when off).
-    // Per-row: entity picker activates only when that row's label text differs from its default.
-    const labelsEnabled = !!(cfg._labels_custom_entities);
-
-    // Helper: entity picker that can be visually disabled
+        // Helper: entity picker that can be visually disabled
     const pickerMaybeDisabled = (key, label, disabled = false, optional = false) => {
       const wrap = picker(key, label, optional);
       if (disabled) {
@@ -411,65 +405,6 @@ class RdpFlowCardEditor extends HTMLElement {
       }
       return wrap;
     };
-
-    // Per-row active: true when global gate is ON and label text ≠ default
-    const _labelChanged = (key, def) => labelsEnabled && (cfg[key] || def) !== def;
-    const cellTempActive   = _labelChanged('label_cell_temp_minmax', 'CELL TEMP MIN/MAX');
-    const bmsTempActive    = _labelChanged('label_bms_temp',         'BMS TEMP');
-    const minCellActive    = _labelChanged('label_min_cell',         'Min Cell');
-    const maxCellActive    = _labelChanged('label_max_cell',         'Max Cell');
-    const battDisActive    = _labelChanged('label_batt_dis',         'Batt Dis.');
-    const totalPvGenActive = _labelChanged('label_total_pv_gen',     'TOTAL PV GEN.');
-
-    // Label rows — text field + entity picker; picker active only when row is active
-    const labelRow = (textKey, textLabel, textPlaceholder, entityKey, active = false) => {
-      const frag = document.createDocumentFragment();
-      frag.appendChild(textField(textKey, textLabel, textPlaceholder));
-      const entityRow = document.createElement('div');
-      entityRow.style.cssText = 'margin-top:-6px;margin-bottom:14px;';
-      const entityLabel = document.createElement('div');
-      entityLabel.style.cssText = 'font-size:.72rem;color:var(--secondary-text-color);padding:0 2px 3px;line-height:1;';
-      entityLabel.textContent = active ? 'Entity (overrides default)' : 'Entity — change label to unlock';
-      const sel = document.createElement('ha-selector');
-      sel.hass = this._hass;
-      sel.selector = { entity: {} };
-      sel.value = cfg[entityKey] || '';
-      sel._configKey = entityKey;
-      sel.style.cssText = 'width:100%;display:block;';
-      if (!active) {
-        sel.style.opacity = '0.4';
-        sel.style.pointerEvents = 'none';
-        sel.title = 'Change the label text above to unlock this entity picker';
-      }
-      sel.addEventListener('value-changed', (ev) => {
-        ev.stopPropagation();
-        this._set(entityKey, ev.detail.value || '');
-      });
-      entityRow.appendChild(entityLabel);
-      entityRow.appendChild(sel);
-      const wrapper = document.createElement('div');
-      wrapper.appendChild(frag);
-      wrapper.appendChild(entityRow);
-      return wrapper;
-    };
-
-    // Info banner
-    const labelInfoBanner = (() => {
-      const info = document.createElement('div');
-      info.style.cssText = 'font-size:.72rem;line-height:1.5;color:var(--secondary-text-color);background:var(--secondary-background-color,rgba(0,0,0,.04));border:1px solid var(--divider-color,rgba(0,0,0,.10));border-radius:7px;padding:7px 10px;margin-bottom:10px;';
-      info.innerHTML = '&#x1F4A1; <strong>Tip:</strong> Rename a tile label to unlock its entity override. The matching sensor in the Battery section will lock automatically to prevent duplication.';
-      return info;
-    })();
-
-    shell.appendChild(makeSection('labels', '🏷️', 'Labels', [
-      labelInfoBanner,
-      labelRow('label_cell_temp_minmax', 'Cell Temp Min/Max label', 'CELL TEMP MIN/MAX', 'label_entity_cell_temp', cellTempActive),
-      labelRow('label_bms_temp',         'BMS Temp label',          'BMS TEMP',          'label_entity_bms_temp',  bmsTempActive),
-      labelRow('label_min_cell',         'Min Cell label',          'Min Cell',          'label_entity_min_cell',  minCellActive),
-      labelRow('label_max_cell',         'Max Cell label',          'Max Cell',          'label_entity_max_cell',  maxCellActive),
-      labelRow('label_batt_dis',         'Batt Dis label',          'Batt Dis.',         'label_entity_batt_dis',  battDisActive),
-      labelRow('label_total_pv_gen',     'Total PV Gen label',      'TOTAL PV GEN.',     'total_pv_gen_entity',    totalPvGenActive),
-    ], { toggleKey: '_labels_custom_entities', toggleOn: labelsEnabled, hidden: !labelsEnabled }));
 
     shell.appendChild(makeSection('solar', '☀️', 'Solar', [
       picker('pv1_power', 'PV1 Power'),
@@ -639,20 +574,7 @@ class RdpFlowCard extends HTMLElement {
       charger_battery_capacity_wh: '',
       sun: 'sun.sun',
       inverter_name: 'Inverter',
-      label_cell_temp_minmax: 'CELL TEMP MIN/MAX',
-      label_bms_temp: 'BMS TEMP',
-      label_endurance: 'ENDURANCE',
-      label_min_cell: 'Min Cell',
-      label_max_cell: 'Max Cell',
-      label_batt_dis: 'Batt Dis.',
       total_pv_gen_entity: 'sensor.goodwe_total_pv_generation',
-      label_total_pv_gen: 'TOTAL PV GEN.',
-      label_entity_cell_temp: '',
-      label_entity_bms_temp: '',
-      label_entity_min_cell: '',
-      label_entity_max_cell: '',
-      label_entity_batt_dis: '',
-      _labels_custom_entities: false,
       grid_power_alt: 'sensor.grid_phase_a_power',
       _show_battery: true,
       _show_battery2: false,
@@ -1512,8 +1434,8 @@ class RdpFlowCard extends HTMLElement {
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: 'rdp-flow-card',
-  name: 'K-Flow Card',
-  description: 'Real-time solar/battery/grid energy flow card with animated power paths, dual-battery support, EV charger integration, and per-tile label overrides.',
+  name: 'RdP-Flow',
+  description: 'Real-time solar/battery/grid energy flow card with animated power paths, EV charger and heat pump support.',
   preview: true,
   version: '1.0.0',
 });
