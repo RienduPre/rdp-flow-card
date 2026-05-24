@@ -450,7 +450,6 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('battery_voltage',  'Battery Voltage'),
       pickerMaybeDisabled('battery_temp1',    'Temp 1',             cellTempActive),
       pickerMaybeDisabled('battery_temp2',    'Temp 2',             cellTempActive),
-      pickerMaybeDisabled('battery_mos',      'BMS Temp',           bmsTempActive),
       pickerMaybeDisabled('battery_min_cell', 'Min Cell Voltage',   minCellActive),
       pickerMaybeDisabled('battery_max_cell', 'Max Cell Voltage',   maxCellActive),
       pickerMaybeDisabled('batt_dis',         'Discharge Today',    battDisActive),
@@ -466,7 +465,6 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('battery2_power',    'Power'),
       picker('battery2_current',  'Current'),
       picker('battery2_voltage', 'Voltage'),
-      pickerMaybeDisabled('battery2_mos',     'BMS Temp', bmsTempActive),
       divider(),
       numberField('battery2_full_wh', 'Battery 2 Capacity (if different from Batt 1)', 0, 50000, 1, 'Wh'),
     ], { toggleKey: '_show_battery2', toggleOn: showBatt2, hidden: !showBatt2 }));
@@ -549,7 +547,6 @@ class RdpFlowCard extends HTMLElement {
       battery_voltage: 'sensor.jk_voltage',
       battery_temp1: 'sensor.jk_temp1',
       battery_temp2: 'sensor.jk_temp2',
-      battery_mos: 'sensor.jk_mos',
       battery_min_cell: 'sensor.jk_cellmin',
       battery_max_cell: 'sensor.jk_cellmax',
       goodwe_battery_soc: 'sensor.goodwe_battery_state_of_charge',
@@ -560,7 +557,6 @@ class RdpFlowCard extends HTMLElement {
       battery2_power: '',
       battery2_current: '',
       battery2_voltage: '',
-      battery2_mos: '',
       battery_full_ah: 314,
       battery_full_wh: 16076,
       battery2_full_wh: '',   // Fix #14: optional separate capacity for battery 2
