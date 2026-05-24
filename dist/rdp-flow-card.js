@@ -863,7 +863,7 @@ class RdpFlowCard extends HTMLElement {
       <text id="evPowerVal" x="370" y="372" text-anchor="middle" font-size="11" font-weight="700" class="ev-val" fill="#29c4f6">-- W</text>
       <text id="evCurrentVal" x="370" y="383" text-anchor="middle" font-size="9" class="svg-dim" fill="#8b949e">-- A</text>
       <text id="evSocVal" x="518" y="400" text-anchor="end" font-size="10" font-weight="700" fill="#4ade80">-- %</text>
-      <text id="ev1NameLabel" x="462" y="449" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
+      <text id="ev1NameLabel" x="462" y="430" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
     </g>` : '';
 
     const evY2 = evY + 100;
@@ -875,7 +875,7 @@ class RdpFlowCard extends HTMLElement {
       <text id="ev2PowerVal" x="389" y="${evY2 + 14}" text-anchor="middle" font-size="11" font-weight="700" class="ev-val" fill="#29c4f6">-- W</text>
       <text id="ev2CurrentVal" x="389" y="${evY2 + 25}" text-anchor="middle" font-size="9" class="svg-dim" fill="#8b949e">-- A</text>
       <text id="ev2SocVal" x="518" y="${evY2 + 42}" text-anchor="end" font-size="10" font-weight="700" fill="#4ade80">-- %</text>
-      <text id="ev2NameLabel" x="462" y="${evY2 + 91}" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
+      <text id="ev2NameLabel" x="462" y="${evY2 + 72}" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
     </g>` : '';
 
 
