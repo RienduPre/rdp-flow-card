@@ -881,7 +881,7 @@ class RdpFlowCard extends HTMLElement {
 
     const hp1txt = hp ? `<g id="hp1Group">
       <path id="flowHomeHP1" d="M 179,397 H 75" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" opacity="0" style="display:none">
-        <animate attributeName="stroke-dashoffset" from="-14" to="0" dur="1.2s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.2s" repeatCount="indefinite"/>
       </path>
       <g id="hp1IconG" transform="translate(5,369)" style="opacity:0.3">
         <ellipse cx="35" cy="64" rx="28" ry="3.5" fill="rgba(0,0,0,0.22)"/>
@@ -908,7 +908,7 @@ class RdpFlowCard extends HTMLElement {
     </g>` : '';
     const hp2txt = hp2 ? `<g id="hp2Group">
       <path id="flowHomeHP2" d="M 179,410 H 141 V 480 H 75" fill="none" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" opacity="0" style="display:none">
-        <animate attributeName="stroke-dashoffset" from="-14" to="0" dur="1.2s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1.2s" repeatCount="indefinite"/>
       </path>
       <g id="hp2IconG" transform="translate(5,452)" style="opacity:0.3">
         <ellipse cx="35" cy="64" rx="28" ry="3.5" fill="rgba(0,0,0,0.22)"/>
