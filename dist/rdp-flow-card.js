@@ -373,9 +373,53 @@ class RdpFlowCardEditor extends HTMLElement {
       return d;
     };
 
+    const segmentedRow = (key, labelText, options) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'row';
+      wrap.style.cssText = 'margin-bottom:14px;';
+      const lbl = document.createElement('div');
+      lbl.className = 'row-label';
+      lbl.style.marginBottom = '6px';
+      lbl.textContent = labelText;
+      wrap.appendChild(lbl);
+      const group = document.createElement('div');
+      group.style.cssText = 'display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--divider-color,rgba(0,0,0,.2));';
+      const current = cfg[key] || options[0].value;
+      options.forEach(({ value, label }, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        const active = current === value;
+        btn.style.cssText = [
+          'flex:1', 'padding:6px 0', 'font-size:.78rem', 'font-weight:600',
+          'cursor:pointer', 'border:none', 'outline:none',
+          'border-left:' + (i > 0 ? '1px solid var(--divider-color,rgba(0,0,0,.2))' : 'none'),
+          'background:' + (active ? 'var(--primary-color,#03a9f4)' : 'var(--card-background-color,#fff)'),
+          'color:' + (active ? '#fff' : 'var(--primary-text-color)'),
+          'transition:background .15s,color .15s',
+        ].join(';');
+        btn.addEventListener('click', () => {
+          this._set(key, value);
+          group.querySelectorAll('button').forEach((b, j) => {
+            const sel = options[j].value === value;
+            b.style.background = sel ? 'var(--primary-color,#03a9f4)' : 'var(--card-background-color,#fff)';
+            b.style.color = sel ? '#fff' : 'var(--primary-text-color)';
+          });
+        });
+        group.appendChild(btn);
+      });
+      wrap.appendChild(group);
+      return wrap;
+    };
+
     // ═══ Build sections ═══
     shell.appendChild(makeSection('general', '⚙️', 'General', [
       textField('inverter_name', 'Inverter Name', 'e.g. My Inverter'),
+      divider(),
+      segmentedRow('theme_mode', '🌗 Theme', [
+        { value: 'auto',  label: 'Automatic' },
+        { value: 'dark',  label: 'Dark' },
+        { value: 'light', label: 'Light' },
+      ]),
     ]));
 
 
@@ -543,6 +587,7 @@ class RdpFlowCard extends HTMLElement {
       charger_battery_capacity_wh: '',
       sun: 'sun.sun',
       inverter_name: 'Inverter',
+      theme_mode: 'auto',
       total_pv_gen_entity: 'sensor.goodwe_total_pv_generation',
       grid_power_alt: 'sensor.grid_phase_a_power',
       _show_battery: true,
@@ -576,17 +621,23 @@ class RdpFlowCard extends HTMLElement {
   setConfig(config) {
     this.config = { ...RdpFlowCard.getStubConfig(), ...config };
     this._buildStaticSVG();
-    const isDark = this._hass?.themes?.darkMode !== false;
-    this._applyTheme(isDark);
+    this._applyTheme(this._resolveIsDark());
     if (this._hass) this._updateDynamic();
   }
 
   set hass(hass) {
-    const prevDark = this._hass?.themes?.darkMode;
+    const prevDark = this._resolveIsDark();
     this._hass = hass;
-    const nowDark = hass?.themes?.darkMode !== false;
+    const nowDark = this._resolveIsDark();
     if (prevDark !== nowDark) this._applyTheme(nowDark);
     this._updateDynamic();
+  }
+
+  _resolveIsDark() {
+    const mode = this.config?.theme_mode || 'auto';
+    if (mode === 'dark')  return true;
+    if (mode === 'light') return false;
+    return this._hass?.themes?.darkMode !== false;
   }
 
   _applyTheme(isDark) {
