@@ -1515,6 +1515,6 @@ window.customCards.push({
   name: 'K-Flow Card',
   description: 'Real-time solar/battery/grid energy flow card with animated power paths, dual-battery support, EV charger integration, and per-tile label overrides.',
   preview: true,
-  version: '1.0.2',
+  version: '1.0.0',
 });
 customElements.define('rdp-flow-card', RdpFlowCard);
