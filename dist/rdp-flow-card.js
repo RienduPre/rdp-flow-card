@@ -548,6 +548,7 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('charger_power',           'Charger Power'),
       picker('charger_current',         'Charger Current'),
       picker('charger_soc',             'Car Battery SOC'),
+      textField('ev1_name',             'Car 1 Label', ''),
     ], { toggleKey: '_show_ev', toggleOn: showEV, hidden: !showEV }));
 
     shell.appendChild(makeSection('ev2', '🚗', 'EV 2 / Second Car', [
@@ -555,6 +556,7 @@ class RdpFlowCardEditor extends HTMLElement {
       picker('charger2_power',          'Charger 2 Power'),
       picker('charger2_current',        'Charger 2 Current'),
       picker('charger2_soc',            'Car 2 Battery SOC'),
+      textField('ev2_name',             'Car 2 Label', ''),
     ], { toggleKey: '_show_ev2', toggleOn: showEV2, hidden: !showEV2 }));
 
     shell.appendChild(makeSection('hp1', '🌡️', 'Warmtepomp 1', [
@@ -658,7 +660,9 @@ class RdpFlowCard extends HTMLElement {
       invert_grid_power: false,
       _show_pv_extra: false,   // combined toggle
       _show_ev: false,
+      ev1_name: '',
       _show_ev2: false,
+      ev2_name: '',
       charger2_state: '',
       _show_hp: false,
       hp1_state: '',
@@ -859,6 +863,7 @@ class RdpFlowCard extends HTMLElement {
       <text id="evPowerVal" x="370" y="372" text-anchor="middle" font-size="11" font-weight="700" class="ev-val" fill="#29c4f6">-- W</text>
       <text id="evCurrentVal" x="370" y="383" text-anchor="middle" font-size="9" class="svg-dim" fill="#8b949e">-- A</text>
       <text id="evSocVal" x="518" y="400" text-anchor="end" font-size="10" font-weight="700" fill="#4ade80">-- %</text>
+      <text id="ev1NameLabel" x="462" y="449" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
     </g>` : '';
 
     const evY2 = evY + 100;
@@ -870,6 +875,7 @@ class RdpFlowCard extends HTMLElement {
       <text id="ev2PowerVal" x="389" y="${evY2 + 14}" text-anchor="middle" font-size="11" font-weight="700" class="ev-val" fill="#29c4f6">-- W</text>
       <text id="ev2CurrentVal" x="389" y="${evY2 + 25}" text-anchor="middle" font-size="9" class="svg-dim" fill="#8b949e">-- A</text>
       <text id="ev2SocVal" x="518" y="${evY2 + 42}" text-anchor="end" font-size="10" font-weight="700" fill="#4ade80">-- %</text>
+      <text id="ev2NameLabel" x="462" y="${evY2 + 91}" text-anchor="middle" font-size="9" fill="#8b949e" letter-spacing="1"></text>
     </g>` : '';
 
 
@@ -1007,7 +1013,7 @@ class RdpFlowCard extends HTMLElement {
     </style>
     <div class="wrap">
       <div class="ct">⚡ Energy Flow</div>
-      <div style="width:100%;max-width:520px;margin:0 auto"><svg id="flowSvg" viewBox="0 0 520 540" style="width:100%;display:block">
+      <div style="width:100%;max-width:520px;margin:0 auto"><svg id="flowSvg" viewBox="0 0 520 560" style="width:100%;display:block">
       <defs>
         <filter id="arcSunF" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="7"/></filter>
         <filter id="arcSunF2" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>
@@ -1407,10 +1413,12 @@ class RdpFlowCard extends HTMLElement {
         setText('evPowerVal', chargerPower.toFixed(0) + ' W');
         setText('evCurrentVal', chargerCurrent.toFixed(1) + ' A');
         setText('evSocVal', chargerSoc.toFixed(0) + ' %');
+        setText('ev1NameLabel', this.config.ev1_name || '');
       } else {
         setText('evPowerVal', '-- W');
         setText('evCurrentVal', '-- A');
         setText('evSocVal', '-- %');
+        setText('ev1NameLabel', this.config.ev1_name || '');
       }
       } // end else (_show_ev)
     }
@@ -1442,10 +1450,12 @@ class RdpFlowCard extends HTMLElement {
           setText('ev2PowerVal', charger2Power.toFixed(0) + ' W');
           setText('ev2CurrentVal', charger2Current.toFixed(1) + ' A');
           setText('ev2SocVal', charger2Soc.toFixed(0) + ' %');
+          setText('ev2NameLabel', this.config.ev2_name || '');
         } else {
           setText('ev2PowerVal', '-- W');
           setText('ev2CurrentVal', '-- A');
           setText('ev2SocVal', '-- %');
+          setText('ev2NameLabel', this.config.ev2_name || '');
         }
       }
     }
