@@ -1310,8 +1310,8 @@ class RdpFlowCard extends HTMLElement {
         // Fix #12: removed early return here — was silently skipping any code added after this block
       } else {
       evGroup.style.display = '';
-      const isChargingEV = chargerStateStr === 'charging';
-      const isCompleted = chargerStateStr === 'completed' || chargerStateStr === 'finished';
+      const isChargingEV = chargerStateStr === 'charging' || chargerPower > 10;
+      const isCompleted = (chargerStateStr === 'completed' || chargerStateStr === 'finished') && chargerPower <= 10;
       const evFlow = getEl('flowHomeEV');
       const evIcon = getEl('evIconImg');
       if (evFlow) {
@@ -1327,17 +1327,10 @@ class RdpFlowCard extends HTMLElement {
           if (evIcon) { evIcon.setAttribute('filter', ''); evIcon.style.opacity = '0.3'; }
         }
       }
-      if (isChargingEV || isCompleted) {
-        setText('evPowerVal', chargerPower.toFixed(0) + ' W');
-        setText('evCurrentVal', chargerCurrent.toFixed(1) + ' A');
-        setText('evSocVal', chargerSoc.toFixed(0) + ' %');
-        setText('ev1NameLabel', this.config.ev1_name || '');
-      } else {
-        setText('evPowerVal', '-- W');
-        setText('evCurrentVal', '-- A');
-        setText('evSocVal', '-- %');
-        setText('ev1NameLabel', this.config.ev1_name || '');
-      }
+      setText('evPowerVal', chargerPower > 0 ? chargerPower.toFixed(0) + ' W' : '-- W');
+      setText('evCurrentVal', chargerCurrent > 0 ? chargerCurrent.toFixed(1) + ' A' : '-- A');
+      setText('evSocVal', chargerSoc > 0 ? chargerSoc.toFixed(0) + ' %' : '-- %');
+      setText('ev1NameLabel', this.config.ev1_name || '');
       } // end else (_show_ev)
     }
 
@@ -1348,8 +1341,8 @@ class RdpFlowCard extends HTMLElement {
         ev2Group.style.display = 'none';
       } else {
         ev2Group.style.display = '';
-        const isChargingEV2 = charger2StateStr === 'charging';
-        const isCompletedEV2 = charger2StateStr === 'completed' || charger2StateStr === 'finished';
+        const isChargingEV2 = charger2StateStr === 'charging' || charger2Power > 10;
+        const isCompletedEV2 = (charger2StateStr === 'completed' || charger2StateStr === 'finished') && charger2Power <= 10;
         const ev2Flow = getEl('flowHomeEV2');
         const ev2Icon = getEl('ev2IconImg');
         if (ev2Flow) {
@@ -1364,17 +1357,10 @@ class RdpFlowCard extends HTMLElement {
             if (ev2Icon) { ev2Icon.setAttribute('filter', ''); ev2Icon.style.opacity = '0.3'; }
           }
         }
-        if (isChargingEV2 || isCompletedEV2) {
-          setText('ev2PowerVal', charger2Power.toFixed(0) + ' W');
-          setText('ev2CurrentVal', charger2Current.toFixed(1) + ' A');
-          setText('ev2SocVal', charger2Soc.toFixed(0) + ' %');
-          setText('ev2NameLabel', this.config.ev2_name || '');
-        } else {
-          setText('ev2PowerVal', '-- W');
-          setText('ev2CurrentVal', '-- A');
-          setText('ev2SocVal', '-- %');
-          setText('ev2NameLabel', this.config.ev2_name || '');
-        }
+        setText('ev2PowerVal', charger2Power > 0 ? charger2Power.toFixed(0) + ' W' : '-- W');
+        setText('ev2CurrentVal', charger2Current > 0 ? charger2Current.toFixed(1) + ' A' : '-- A');
+        setText('ev2SocVal', charger2Soc > 0 ? charger2Soc.toFixed(0) + ' %' : '-- %');
+        setText('ev2NameLabel', this.config.ev2_name || '');
       }
     }
 
