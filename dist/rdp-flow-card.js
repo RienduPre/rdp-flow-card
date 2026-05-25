@@ -886,7 +886,7 @@ class RdpFlowCard extends HTMLElement {
       <text id="battPwrFlow2" x="96" y="170" text-anchor="middle" font-size="11" font-weight="700" class="svg-dim" fill="#8b949e">-- W</text>
     `;
 
-    const batteryTip = `<rect x="75" y="126" width="18" height="4" rx="2" fill="url(#battCapGrad)"/>`;
+    const batteryTip = `<rect x="85" y="126" width="18" height="4" rx="2" fill="url(#battCapGrad)"/>`;
 
     // Battery visibility helpers – mirror EV charger pattern
     const battGhostPath = showBatt1
@@ -898,26 +898,26 @@ class RdpFlowCard extends HTMLElement {
     const battIconSection = !showBatt1 ? '' : (
       `<g transform="translate(-36.6, 25.4) scale(0.8)">
         <g id="battIconWrap">
-          <rect x="49" y="135" width="70" height="132" rx="10" fill="url(#battShellGrad)"/>
+          <rect x="49" y="135" width="90" height="132" rx="10" fill="url(#battShellGrad)"/>
           ${batteryTip}
-          <rect x="51" y="258" width="66" height="9" rx="4" fill="url(#battCapGrad)"/>
-          <rect x="51" y="137" width="66" height="7" rx="4" fill="url(#battCapGrad)"/>
-          <rect x="49" y="135" width="70" height="132" rx="10" fill="url(#battGlassBody)" style="pointer-events:none"/>
-          <rect x="53" y="145" width="62" height="118" rx="8" fill="#0f1214"/>` +
+          <rect x="51" y="258" width="86" height="9" rx="4" fill="url(#battCapGrad)"/>
+          <rect x="51" y="137" width="86" height="7" rx="4" fill="url(#battCapGrad)"/>
+          <rect x="49" y="135" width="90" height="132" rx="10" fill="url(#battGlassBody)" style="pointer-events:none"/>
+          <rect x="53" y="145" width="82" height="118" rx="8" fill="#0f1214"/>` +
       (dual ? `
-            <rect id="battFillBar1" x="53" y="263" width="30" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClipLeft)"/>
-            <rect id="battFillHL1" x="53" y="263" width="30" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClipLeft)" style="pointer-events:none"/>
-            <rect id="battFillBar2" x="85" y="263" width="30" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClipRight)"/>
-            <rect id="battFillHL2" x="85" y="263" width="30" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClipRight)" style="pointer-events:none"/>
-            <g id="battBoltGroup1" opacity="0"><polygon points="72,176 64,195 70,195 66,215 78,193 72,193 80,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
-            <g id="battBoltGroup2" opacity="0"><polygon points="104,176 96,195 102,195 98,215 110,193 104,193 112,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
-            <text id="fcBattVal1" x="68" y="208" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">--%</text>
-            <text id="fcBattVal2" x="100" y="208" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">--%</text>
+            <rect id="battFillBar1" x="53" y="263" width="40" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClipLeft)"/>
+            <rect id="battFillHL1" x="53" y="263" width="40" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClipLeft)" style="pointer-events:none"/>
+            <rect id="battFillBar2" x="95" y="263" width="40" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClipRight)"/>
+            <rect id="battFillHL2" x="95" y="263" width="40" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClipRight)" style="pointer-events:none"/>
+            <g id="battBoltGroup1" opacity="0"><polygon points="73,176 65,195 71,195 67,215 79,193 73,193 81,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
+            <g id="battBoltGroup2" opacity="0"><polygon points="115,176 107,195 113,195 109,215 121,193 115,193 123,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
+            <text id="fcBattVal1" x="73" y="208" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">--%</text>
+            <text id="fcBattVal2" x="115" y="208" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">--%</text>
           ` : `
-            <rect id="battFillBar" x="53" y="263" width="62" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClip)"/>
-            <rect id="battFillHL" x="53" y="263" width="62" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClip)" style="pointer-events:none"/>
-            <g id="battBoltGroup" opacity="0"><polygon points="86,176 74,199 82,199 77,223 93,195 85,195 97,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
-            <text id="fcBattVal" x="84" y="211" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">--%</text>
+            <rect id="battFillBar" x="53" y="263" width="82" height="0" rx="0" fill="#3fb950" clip-path="url(#battBodyClip)"/>
+            <rect id="battFillHL" x="53" y="263" width="82" height="0" rx="0" fill="url(#battFillHighlight)" clip-path="url(#battBodyClip)" style="pointer-events:none"/>
+            <g id="battBoltGroup" opacity="0"><polygon points="96,176 84,199 92,199 87,223 103,195 95,195 107,176" fill="#1a4aff" stroke="rgba(100,150,255,.5)" stroke-width="0.8" filter="url(#battGlowBolt)"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.0s" repeatCount="indefinite"/></polygon></g>
+            <text id="fcBattVal" x="94" y="211" text-anchor="middle" font-size="20" font-weight="900" fill="#fff">--%</text>
           `) +
       `</g>
       </g>`
@@ -973,7 +973,7 @@ class RdpFlowCard extends HTMLElement {
         <linearGradient id="pvGlassG" x1="10%" y1="0%" x2="90%" y2="100%"><stop offset="0%" stop-color="#0e2458"/><stop offset="100%" stop-color="#060e28"/></linearGradient>
         <linearGradient id="pvCellG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a50d8"/><stop offset="100%" stop-color="#0c2880"/></linearGradient>
         <linearGradient id="hpBodyG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a4a5e"/><stop offset="100%" stop-color="#0e2030"/></linearGradient><linearGradient id="pvShineG" x1="0%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="60%" stop-color="rgba(255,255,255,0.04)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></linearGradient>
-        ${dual?`<clipPath id="battBodyClipLeft"><rect x="53" y="145" width="30" height="118" rx="6"/></clipPath><clipPath id="battBodyClipRight"><rect x="85" y="145" width="30" height="118" rx="6"/></clipPath>`:`<clipPath id="battBodyClip"><rect x="53" y="145" width="62" height="118" rx="8"/></clipPath>`}
+        ${dual?`<clipPath id="battBodyClipLeft"><rect x="53" y="145" width="40" height="118" rx="6"/></clipPath><clipPath id="battBodyClipRight"><rect x="95" y="145" width="40" height="118" rx="6"/></clipPath>`:`<clipPath id="battBodyClip"><rect x="53" y="145" width="82" height="118" rx="8"/></clipPath>`}
         <filter id="battGlowRed"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="battGlowOrange"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="battGlowGreen"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
