@@ -1004,7 +1004,7 @@ class RdpFlowCard extends HTMLElement {
         <circle id="moonGlow" cx="260" cy="72" r="12" fill="rgba(180,205,255,.18)"/>
         <circle id="moonDot" cx="260" cy="72" r="6" fill="rgba(220,235,255,.92)" stroke="rgba(240,248,255,.9)" stroke-width="1.2"/>
       </g>
-      <rect id="arcPvLabelRect" x="162" y="22" width="96" height="26" rx="13" fill="rgba(244,169,59,.18)" stroke="rgba(244,169,59,.55)" stroke-width="1.2"/>
+      <rect id="arcPvLabelRect" x="162" y="22" width="96" height="26" rx="13" fill="rgba(15,18,24,.78)" stroke="rgba(244,169,59,.7)" stroke-width="1.4"/>
       <text id="arcPvLabelText" x="210" y="39" text-anchor="middle" fill="#f4a93b" font-size="13" font-weight="800">0 W ⚡</text>
       <g id="pvFlowGroup"></g>
 
@@ -1152,8 +1152,8 @@ class RdpFlowCard extends HTMLElement {
     const pvTxt = (pvTotal >= 1000 ? (pvTotal / 1000).toFixed(2) + ' kW' : pvTotal.toFixed(0) + ' W') + ' ⚡';
     const pvLabelRect = getEl('arcPvLabelRect');
     const pvLabelText = getEl('arcPvLabelText');
-    if (pvLabelRect) { pvLabelRect.setAttribute('x', sun.t < 0.5 ? Math.max(4, sun.bx - 108) : Math.min(sun.bx + 14, 420)); pvLabelRect.setAttribute('y', Math.max(2, sun.by - 28)); pvLabelRect.setAttribute('fill', clr('rgba(244,169,59,.18)', 'rgba(180,130,0,.18)')); pvLabelRect.setAttribute('stroke', clr('rgba(244,169,59,.55)', 'rgba(120,80,0,.55)')); }
-    if (pvLabelText) { pvLabelText.setAttribute('x', sun.t < 0.5 ? Math.max(52, sun.bx - 60) : Math.min(sun.bx + 62, 468)); pvLabelText.setAttribute('y', Math.max(19, sun.by - 11)); pvLabelText.textContent = pvTxt; pvLabelText.setAttribute('fill', clr('#f4a93b', '#5a3e00')); }
+    if (pvLabelRect) { pvLabelRect.setAttribute('x', sun.t < 0.5 ? Math.max(4, sun.bx - 108) : Math.min(sun.bx + 14, 420)); pvLabelRect.setAttribute('y', Math.max(2, sun.by - 28)); pvLabelRect.setAttribute('fill', clr('rgba(15,18,24,.78)', 'rgba(255,248,220,.92)')); pvLabelRect.setAttribute('stroke', clr('rgba(244,169,59,.7)', 'rgba(120,80,0,.55)')); }
+    if (pvLabelText) { pvLabelText.setAttribute('x', sun.t < 0.5 ? Math.max(52, sun.bx - 60) : Math.min(sun.bx + 62, 468)); pvLabelText.setAttribute('y', Math.max(19, sun.by - 11)); pvLabelText.textContent = pvTxt; pvLabelText.setAttribute('fill', clr('#f4a93b', '#7a4800')); }
     setText('arcRiseLabel', sun.rise);
     setText('arcSetLabel', sun.set);
 
