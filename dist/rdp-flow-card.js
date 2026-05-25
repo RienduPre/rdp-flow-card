@@ -1244,7 +1244,8 @@ class RdpFlowCard extends HTMLElement {
     }
 
     setText('invNameLabel', this.config.inverter_name || 'Inverter');
-    const invLoadPct = Math.min(pvTotal / invMax * 100, 100).toFixed(0);
+    const gridExportW = gridActive < -10 ? Math.abs(gridActive) : 0;
+    const invLoadPct = Math.min((load + gridExportW) / invMax * 100, 100).toFixed(0);
     setText('invLoadPctFlow', invLoadPct + '%'); setAttr('invLoadPctFlow', 'fill', Number(invLoadPct) <= 50 ? clr('#3fb950', '#186f2c') : clr('#f39c4b', '#c07320'));
 
     const gridDir = gridActive > 10 ? '▼ ' : gridActive < -10 ? '▲ ' : '';
